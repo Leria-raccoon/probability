@@ -9,7 +9,7 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #767f99;
+            background-color: #8e95a9;
             color: #333;
             height: 100vh;
             overflow: hidden;
@@ -33,7 +33,7 @@
         }
         
         .table-section {
-            width: 30%;
+            width: 40%;
             height: 100%;
             padding: 20px;
             box-sizing: border-box;
@@ -80,13 +80,13 @@
         }
         
         .variable[data-type="positive"] {
-            background-color: #e8f5e9;
-            border-color: #c8e6c9;
+            background-color: #b4f4b9;
+            border-color: #3b3d3b;
         }
         
         .variable[data-type="negative"] {
-            background-color: #ffebee;
-            border-color: #ffcdd2;
+            background-color: #e2b3ba;
+            border-color: #272323;
         }
         
         .calculations-container {
@@ -124,9 +124,9 @@
         
         button {
             padding: 8px 16px;
-            background-color: #9c27b0;
+            background-color: #7fa0b0;
             color: white;
-            border: none;
+            border-color: #617280;
             border-radius: 4px;
             cursor: pointer;
             margin-top: 10px;
@@ -134,7 +134,7 @@
         }
         
         button:hover {
-            background-color: #7b1fa2;
+            background-color: #717b89;
         }
         
         .result {
@@ -178,26 +178,26 @@
         
         .add-row {
     margin-top: 15px;
-    background-color: #4caf50;
+    background-color: #6f946f;
     position: relative; /* Убедимся, что кнопка не прилипает к таблице */
     z-index: 1; /* Поднимаем над таблицей */
 }
         
         .add-row:hover {
-            background-color: #388e3c;
+            background-color: #92c692;
         }
         
         .add-cat-columns {
-            background-color: #9c27b0;
+            background-color: #8e88b4;
         }
         
         .add-cat-columns:hover {
-            background-color: #7b1fa2;
+            background-color: #754a4a;
         }
         
         [contenteditable="true"]:focus {
-            outline: 2px solid #2196f3;
-            background-color: #e3f2fd;
+            outline: 2px solid #3a454d;
+            background-color: #d7dee4;
         }
         
         .table-header {
@@ -220,6 +220,25 @@
     background-color: #f2f2f2;
     z-index: 10;
 }
+
+/* Положительные кошачьи переменные */
+.variable.cat[data-type="positive"].visible {
+    background-color: #fff58a; /* Светло-розовый */
+    border: 1px solid #ff69b4; /* Темно-розовая граница */
+}
+
+/* Отрицательные кошачьи переменные */
+.variable.cat[data-type="negative"].visible {
+    background-color: #585643; /* Светло-голубой */
+    border: 1px solid #1e90ff; /* Синяя граница */
+    color: #ddd;
+}
+
+/* Скрытые кошачьи переменные */
+.variable.cat:not(.visible) {
+    display: none;
+}
+
     </style>
 </head>
 <body>
@@ -237,10 +256,10 @@
                     <div class="variable" draggable="true" data-type="positive" data-field="gaveUp">Сдалась</div>
                     <div class="variable" draggable="true" data-type="negative" data-field="gaveUp">Не сдалась</div>
                     
-                    <div class="variable cat hidden" draggable="true" data-type="positive" data-field="moodAfterCat">Настроение после кошки</div>
-                    <div class="variable cat hidden" draggable="true" data-type="negative" data-field="moodAfterCat">Настроение не изменилось</div>
-                    <div class="variable cat hidden" draggable="true" data-type="positive" data-field="newColumn">Новый параметр</div>
-                    <div class="variable cat hidden" draggable="true" data-type="negative" data-field="newColumn">Не новый параметр</div>
+                    <div class="variable cat" draggable="true" data-type="positive" data-field="moodAfterCat">Настроение после кошки</div>
+<div class="variable cat" draggable="true" data-type="negative" data-field="moodAfterCat">Настроение не изменилось</div>
+<div class="variable cat" draggable="true" data-type="positive" data-field="newColumn">Новый параметр</div>
+<div class="variable cat" draggable="true" data-type="negative" data-field="newColumn">Не новый параметр</div>
                 </div>
             </div>
                 
@@ -264,15 +283,25 @@
                                 <p>Выберите событие и условие.</p>
                             </div>
                         </div>
-                        
+                                              
                         <div class="query-template">
-                            <h3>Зависимая вероятность</h3>
-                            <p>P(<span class="drop-zone" id="depEvent1"></span> → <span class="drop-zone" id="depEvent2"></span>)</p>
-                            <button onclick="calculateDependentProbability()">Рассчитать</button>
-                            <div class="result" id="depResult">
-                                <p>Выберите два зависимых события.</p>
+                            <h3>Совместная вероятность</h3>
+                            <p>P(<span class="drop-zone" id="jointEvent1"></span> ∩ <span class="drop-zone" id="jointEvent2"></span>)</p>
+                            <button onclick="calculateJointProbability()">Рассчитать</button>
+                            <div class="result" id="jointResult">
+                                <p>Выберите два события для расчета совместной вероятности.</p>
                             </div>
                         </div>
+
+                        <div class="query-template">
+                            <h3>Вероятность последовательности(зависимая)</h3>
+                            <p>P(<span class="drop-zone" id="seqEvent1"></span> → <span class="drop-zone" id="seqEvent2"></span>)</p>
+                            <button onclick="calculateSequenceProbability()">Рассчитать</button>
+                            <div class="result" id="seqResult">
+                                <p>Выберите два события для расчета вероятности последовательности.</p>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -482,29 +511,42 @@
         
         // Переключение дополнительных столбцов и переменных
         function toggleCatColumns() {
-            const catColumns = document.querySelectorAll('.cat-column');
-            const catVariables = document.querySelectorAll('.variable.cat');
-            const button = document.querySelector('.add-cat-columns');
-            
-            catColumns.forEach(col => {
-                col.classList.toggle('hidden');
-            });
-            
-            catVariables.forEach(variable => {
-                variable.classList.toggle('hidden');
-            });
-            
-            if (button.textContent === 'Добавить кошачьи столбцы') {
-                button.textContent = 'Убрать кошачьи столбцы';
-                button.style.backgroundColor = '#f44336';
-            } else {
-                button.textContent = 'Добавить кошачьи столбцы';
-                button.style.backgroundColor = '#9c27b0';
-            }
-            
-            saveTableData();
+    const catColumns = document.querySelectorAll('.cat-column');
+    const catVariables = document.querySelectorAll('.variable.cat');
+    const button = document.querySelector('.add-cat-columns');
+    
+    // Определяем текущее состояние
+    const showingCats = catColumns[0].classList.contains('hidden');
+    
+    // Переключаем столбцы
+    catColumns.forEach(col => {
+        col.classList.toggle('hidden');
+    });
+    
+    // Переключаем переменные
+    catVariables.forEach(variable => {
+        if (showingCats) {
+            variable.classList.add('visible');
+        } else {
+            variable.classList.remove('visible');
         }
-        
+    });
+    
+    // Меняем кнопку
+    if (showingCats) {
+        button.textContent = 'Убрать кошачьи столбцы';
+        button.style.backgroundColor = '#ff69b4';
+    } else {
+        button.textContent = 'Добавить кошачьи столбцы';
+        button.style.backgroundColor = '#9c27b0';
+    }
+    
+    saveTableData();
+}
+
+// Скрываем кошачьи элементы при загрузке
+document.querySelectorAll('.cat-column').forEach(col => col.classList.add('hidden'));
+document.querySelectorAll('.variable.cat').forEach(v => v.classList.remove('visible'));
         // Настройка drag and drop
         function setupDragAndDrop() {
             const variables = document.querySelectorAll('.variable');
@@ -667,44 +709,113 @@
             showResult("condResult", `Вероятность ${eventText} при условии ${conditionText}: ${probability}%`, false, formula);
         }
         
-        function calculateDependentProbability() {
-            const event1Zone = document.getElementById('depEvent1');
-            const event2Zone = document.getElementById('depEvent2');
-            
-            const event1Text = event1Zone.textContent;
-            const event1Type = event1Zone.getAttribute('data-type');
-            const event1Field = event1Zone.getAttribute('data-field');
-            
-            const event2Text = event2Zone.textContent;
-            const event2Type = event2Zone.getAttribute('data-type');
-            const event2Field = event2Zone.getAttribute('data-field');
-            
-            if (!event1Text || event1Text === " " || !event2Text || event2Text === " ") {
-                showResult("depResult", "Пожалуйста, выберите оба события", true);
-                return;
-            }
-            
-            const data = getData();
-            const event1Value = event1Type === 'positive' ? 'Да' : 'Нет';
-            const event2Value = event2Type === 'positive' ? 'Да' : 'Нет';
-            
-            const event1Filter = createFilter(event1Field, event1Value);
-            const event2Filter = createFilter(event2Field, event2Value);
-            
-            const event1Count = data.filter(event1Filter).length;
-            const bothEventsCount = data.filter(item => event1Filter(item) && event2Filter(item)).length;
-            
-            if (event1Count === 0) {
-                showResult("depResult", "Нет данных для первого события", true);
-                return;
-            }
-            
-            const probability = (bothEventsCount / event1Count * 100).toFixed(2);
-            
-            const formula = `P(${event1Text} → ${event2Text}) = P(${event1Text} ∩ ${event2Text}) / P(${event1Text}) = ${bothEventsCount} / ${event1Count} = ${probability}%`;
-            showResult("depResult", `Вероятность ${event1Text} → ${event2Text}: ${probability}%`, false, formula);
-        }
         
+        function calculateJointProbability() {
+    const event1Zone = document.getElementById('jointEvent1');
+    const event2Zone = document.getElementById('jointEvent2');
+    
+    const event1Text = event1Zone.textContent;
+    const event1Type = event1Zone.getAttribute('data-type');
+    const event1Field = event1Zone.getAttribute('data-field');
+    
+    const event2Text = event2Zone.textContent;
+    const event2Type = event2Zone.getAttribute('data-type');
+    const event2Field = event2Zone.getAttribute('data-field');
+    
+    if (!event1Text || event1Text === " " || !event2Text || event2Text === " ") {
+        showResult("jointResult", "Пожалуйста, выберите оба события", true);
+        return;
+    }
+    
+
+    
+    const data = getData();
+    const event1Value = event1Type === 'positive' ? 'Да' : 'Нет';
+    const event2Value = event2Type === 'positive' ? 'Да' : 'Нет';
+    
+    const event1Filter = createFilter(event1Field, event1Value);
+    const event2Filter = createFilter(event2Field, event2Value);
+    
+    const total = data.length;
+    const bothEventsCount = data.filter(item => event1Filter(item) && event2Filter(item)).length;
+    const probability = (bothEventsCount / total * 100).toFixed(2);
+    
+    const formula = `P(${event1Text} ∩ ${event2Text}) = Количество(${event1Text} и ${event2Text}) / Общее количество = ${bothEventsCount} / ${total} = ${probability}%`;
+    showResult("jointResult", `Совместная вероятность ${event1Text} и ${event2Text}: ${probability}%`, false, formula);
+}
+
+function calculateSequenceProbability() {
+    const event1Zone = document.getElementById('seqEvent1');
+    const event2Zone = document.getElementById('seqEvent2');
+    
+    // Проверяем, что события выбраны
+    if (!event1Zone.textContent.trim() || !event2Zone.textContent.trim()) {
+        showResult("seqResult", "Пожалуйста, выберите оба события", true);
+        return;
+    }
+    
+    // Получаем параметры событий
+    const event1Text = event1Zone.textContent;
+    const event1Type = event1Zone.getAttribute('data-type');
+    const event1Field = event1Zone.getAttribute('data-field');
+    
+    const event2Text = event2Zone.textContent;
+    const event2Type = event2Zone.getAttribute('data-type');
+    const event2Field = event2Zone.getAttribute('data-field');
+    
+    // Получаем данные из таблицы
+    const data = getData();
+    const total = data.length;
+    
+    // Проверяем, что есть данные для анализа
+    if (total === 0) {
+        showResult("seqResult", "Нет данных для анализа", true);
+        return;
+    }
+    
+    // Определяем значения для фильтрации
+    const event1Value = event1Type === 'positive' ? 'Да' : 'Нет';
+    const event2Value = event2Type === 'positive' ? 'Да' : 'Нет';
+    
+    // Создаем фильтры
+    const event1Filter = createFilter(event1Field, event1Value);
+    const event2Filter = createFilter(event2Field, event2Value);
+    
+    // Считаем P(A) - вероятность первого события
+    const event1Data = data.filter(event1Filter);
+    const event1Count = event1Data.length;
+    
+    if (event1Count === 0) {
+        showResult("seqResult", `Событие "${event1Text}" никогда не встречается`, true);
+        return;
+    }
+    
+    const probA = event1Count / total;
+    
+    // Считаем P(B|A) - вероятность второго события при условии первого
+    const bothEventsData = event1Data.filter(event2Filter);
+    const bothEventsCount = bothEventsData.length;
+    
+    const probBgivenA = bothEventsCount / event1Count;
+    
+    // Итоговая вероятность P(A → B) = P(A) × P(B|A)
+    const probability = (probA * probBgivenA * 100).toFixed(2);
+    
+    // Форматируем формулу для вывода
+    const formula = `
+        P(${event1Text} → ${event2Text}) = P(${event1Text}) × P(${event2Text}|${event1Text}) = 
+        (${event1Count}/${total}) × (${bothEventsCount}/${event1Count}) = ${probability}%
+    `;
+    
+    // Выводим результат
+    showResult(
+        "seqResult", 
+        `Вероятность последовательности ${event1Text} → ${event2Text}: ${probability}%`, 
+        false, 
+        formula
+    );
+}
+
         function showResult(elementId, message, isError, formula = null) {
             const resultDiv = document.getElementById(elementId);
             
