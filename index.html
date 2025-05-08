@@ -11,14 +11,22 @@
             padding: 20px;
             display: flex;
             background-color: #f8f9fa;
+            height: 100vh;
+            overflow: hidden;
         }
         .main-content {
             flex: 1;
             padding-right: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
         .data-panel {
-            width: 25%;
+            width: 30%;
             padding-left: 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
         h1 {
             color: #2c3e50;
@@ -32,11 +40,13 @@
             margin-bottom: 15px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
+        .variables-container {
+            margin-bottom: 15px;
+        }
         .variables {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
-            margin-bottom: 15px;
         }
         .variable {
             padding: 6px 12px;
@@ -46,20 +56,26 @@
             user-select: none;
             font-size: 14px;
         }
+        .variable.cat {
+            background-color: #e1bee7;
+        }
+        .calculations-container {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
         .query-templates {
             display: flex;
-            gap: 10px;
+            flex-direction: column;
+            gap: 15px;
             margin-bottom: 15px;
-            overflow-x: auto;
-            padding-bottom: 10px;
         }
         .query-template {
             background-color: #f1f8fe;
             border: 1px solid #bbdefb;
             border-radius: 6px;
             padding: 12px;
-            min-width: 220px;
-            flex-shrink: 0;
+            width: 100%;
         }
         .query-template h3 {
             margin: 0 0 10px 0;
@@ -127,15 +143,49 @@
             background-color: #3498db;
             color: white;
             border: none;
-            padding: 6px 12px;
+            padding: 10px;
             border-radius: 4px;
             cursor: pointer;
             margin-top: 8px;
             font-size: 13px;
+            width: 100%;
         }
         .math-symbol {
             font-family: 'Times New Roman', serif;
             font-style: normal;
+        }
+        .table-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        #dataTable thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        td[contenteditable="true"]:focus {
+            outline: 2px solid #4caf50;
+            background-color: #f8fff8;
+        }
+        .add-cat-columns {
+            background-color: #9c27b0;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 15px;
+            align-self: flex-end;
+        }
+        .add-cat-columns:hover {
+            background-color: #7b1fa2;
+        }
+        .hidden {
+            display: none;
         }
     </style>
 </head>
@@ -143,7 +193,7 @@
     <div class="main-content">
         <h1>Вероятностный калькулятор</h1>
         
-        <div class="panel">
+        <div class="panel variables-container">
             <h2>Переменные для анализа</h2>
             <div class="variables" id="variablesContainer">
                 <div class="variable" draggable="true" data-type="positive" data-field="mood">Хорошее настроение</div>
@@ -152,33 +202,42 @@
                 <div class="variable" draggable="true" data-type="negative" data-field="success">Неуспех в учебе</div>
                 <div class="variable" draggable="true" data-type="positive" data-field="gaveUp">Сдалась</div>
                 <div class="variable" draggable="true" data-type="negative" data-field="gaveUp">Не сдалась</div>
+                
+                <div class="variable cat hidden" draggable="true" data-type="positive" data-field="moodAfterCat">Настроение после кошки</div>
+                <div class="variable cat hidden" draggable="true" data-type="negative" data-field="moodAfterCat">Настроение не изменилось</div>
+                <div class="variable cat hidden" draggable="true" data-type="positive" data-field="newColumn">Новый параметр</div>
+                <div class="variable cat hidden" draggable="true" data-type="negative" data-field="newColumn">Не новый параметр</div>
             </div>
+        </div>
             
-            <div class="query-templates">
-                <div class="query-template">
-                    <h3>Простая вероятность</h3>
-                    <p>P(<span class="drop-zone" id="simpleEvent"></span>)</p>
-                    <button onclick="calculateSimpleProbability()">Рассчитать</button>
-                    <div class="result" id="simpleResult">
-                        <p>Выберите событие для расчета.</p>
+        <div class="calculations-container">
+            <div class="panel">
+                <div class="query-templates">
+                    <div class="query-template">
+                        <h3>Простая вероятность</h3>
+                        <p>P(<span class="drop-zone" id="simpleEvent"></span>)</p>
+                        <button onclick="calculateSimpleProbability()">Рассчитать</button>
+                        <div class="result" id="simpleResult">
+                            <p>Выберите событие для расчета.</p>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="query-template">
-                    <h3>Условная вероятность</h3>
-                    <p>P(<span class="drop-zone" id="condEvent"></span> | <span class="drop-zone" id="condCondition"></span>)</p>
-                    <button onclick="calculateConditionalProbability()">Рассчитать</button>
-                    <div class="result" id="condResult">
-                        <p>Выберите событие и условие.</p>
+                    
+                    <div class="query-template">
+                        <h3>Условная вероятность</h3>
+                        <p>P(<span class="drop-zone" id="condEvent"></span> | <span class="drop-zone" id="condCondition"></span>)</p>
+                        <button onclick="calculateConditionalProbability()">Рассчитать</button>
+                        <div class="result" id="condResult">
+                            <p>Выберите событие и условие.</p>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="query-template">
-                    <h3>Совместная вероятность</h3>
-                    <p>P(<span class="drop-zone" id="jointEvent1"></span> ∩ <span class="drop-zone" id="jointEvent2"></span>)</p>
-                    <button onclick="calculateJointProbability()">Рассчитать</button>
-                    <div class="result" id="jointResult">
-                        <p>Выберите два события.</p>
+                    
+                    <div class="query-template">
+                        <h3>Зависимая вероятность</h3>
+                        <p>P(<span class="drop-zone" id="depEvent1"></span> → <span class="drop-zone" id="depEvent2"></span>)</p>
+                        <button onclick="calculateDependentProbability()">Рассчитать</button>
+                        <div class="result" id="depResult">
+                            <p>Выберите два зависимых события.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -186,143 +245,270 @@
     </div>
     
     <div class="data-panel panel">
-        <h2>Таблица данных</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>Таблица данных</h2>
+            <button class="add-cat-columns" onclick="toggleCatColumns()">Добавить кошачьи столбцы</button>
+        </div>
         <div class="table-container">
             <table id="dataTable">
                 <thead>
                     <tr>
                         <th contenteditable="true" data-field="date">Дата</th>
-                        <th contenteditable="true" data-field="mood">Настроение</th>
-                        <th contenteditable="true" data-field="success">Успех</th>
-                        <th contenteditable="true" data-field="gaveUp">Сдалась</th>
+                        <th contenteditable="true" data-field="mood">Хорошее настроение</th>
+                        <th contenteditable="true" data-field="success">Успех в учебе</th>
+                        <th contenteditable="true" data-field="gaveUp">Сдалась?</th>
+                        <th class="cat-column hidden" contenteditable="true" data-field="moodAfterCat">Настроение после прихода Мурки</th>
+                        <th class="cat-column hidden" contenteditable="true" data-field="newColumn">Новый параметр</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>2025.04.07</td>
-                        <td>Да</td>
-                        <td>Да</td>
-                        <td>Нет</td>
+                        <td contenteditable="true">2025.04.07</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">Да</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
                     </tr>
                     <tr>
-                        <td>2025.04.08</td>
-                        <td>Да</td>
-                        <td>Да</td>
-                        <td>Нет</td>
+                        <td contenteditable="true">2025.04.08</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">-</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
                     </tr>
                     <tr>
-                        <td>2025.04.09</td>
-                        <td>Да</td>
-                        <td>Да</td>
-                        <td>Нет</td>
+                        <td contenteditable="true">2025.04.09</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">-</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
                     </tr>
                     <tr>
-                        <td>2025.04.10</td>
-                        <td>Нет</td>
-                        <td>Нет</td>
-                        <td>Да</td>
+                        <td contenteditable="true">2025.04.10</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Да</td>
+                        <td class="cat-column hidden" contenteditable="true">-</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
                     </tr>
                     <tr>
-                        <td>2025.04.11</td>
-                        <td>Нет</td>
-                        <td>Нет</td>
-                        <td>Да</td>
+                        <td contenteditable="true">2025.04.11</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Да</td>
+                        <td class="cat-column hidden" contenteditable="true">-</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
                     </tr>
                     <tr>
-                        <td>2025.04.12</td>
-                        <td>Нет</td>
-                        <td>Нет</td>
-                        <td>Нет</td>
+                        <td contenteditable="true">2025.04.12</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">Да</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
                     </tr>
                     <tr>
-                        <td>2025.04.13</td>
-                        <td>Да</td>
-                        <td>Да</td>
-                        <td>Нет</td>
+                        <td contenteditable="true">2025.04.13</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">Да</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
                     </tr>
                     <tr>
-                        <td>2025.04.14</td>
-                        <td>Нет</td>
-                        <td>Да</td>
-                        <td>Нет</td>
+                        <td contenteditable="true">2025.04.14</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">-</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
                     </tr>
                     <tr>
-                        <td>2025.04.15</td>
-                        <td>Нет</td>
-                        <td>Нет</td>
-                        <td>Нет</td>
+                        <td contenteditable="true">2025.04.15</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">-</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
                     </tr>
                     <tr>
-                        <td>2025.04.16</td>
-                        <td>Нет</td>
-                        <td>Да</td>
-                        <td>Нет</td>
+                        <td contenteditable="true">2025.04.16</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
                     </tr>
                     <tr>
-                        <td>2025.04.17</td>
-                        <td>Да</td>
-                        <td>Нет</td>
-                        <td>Нет</td>
+                        <td contenteditable="true">2025.04.17</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">-</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
                     </tr>
                     <tr>
-                        <td>2025.04.18</td>
-                        <td>Да</td>
-                        <td>Да</td>
-                        <td>Нет</td>
+                        <td contenteditable="true">2025.04.18</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">-</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
                     </tr>
                     <tr>
-                        <td>2025.04.19</td>
-                        <td>Нет</td>
-                        <td>Нет</td>
-                        <td>Нет</td>
+                        <td contenteditable="true">2025.04.19</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">-</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
                     </tr>
                     <tr>
-                        <td>2025.04.20</td>
-                        <td>Да</td>
-                        <td>Да</td>
-                        <td>Нет</td>
+                        <td contenteditable="true">2025.04.20</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">Да</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
                     </tr>
                     <tr>
-                        <td>2025.04.21</td>
-                        <td>Да</td>
-                        <td>Да</td>
-                        <td>Нет</td>
+                        <td contenteditable="true">2025.04.21</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">-</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
                     </tr>
                     <tr>
-                        <td>2025.04.22</td>
-                        <td>Да</td>
-                        <td>Нет</td>
-                        <td>Нет</td>
+                        <td contenteditable="true">2025.04.22</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">-</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
                     </tr>
                     <tr>
-                        <td>2025.04.23</td>
-                        <td>Нет</td>
-                        <td>Да</td>
-                        <td>Нет</td>
+                        <td contenteditable="true">2025.04.23</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">-</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
                     </tr>
                     <tr>
-                        <td>2025.04.24</td>
-                        <td>Нет</td>
-                        <td>Нет</td>
-                        <td>Нет</td>
+                        <td contenteditable="true">2025.04.24</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">-</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
                     </tr>
                     <tr>
-                        <td>2025.04.25</td>
-                        <td>Нет</td>
-                        <td>Нет</td>
-                        <td>Нет</td>
+                        <td contenteditable="true">2025.04.25</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">-</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
                     </tr>
                     <tr>
-                        <td>2025.04.26</td>
-                        <td>Нет</td>
-                        <td>Да</td>
-                        <td>Нет</td>
+                        <td contenteditable="true">2025.04.26</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">-</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
                     </tr>
                     <tr>
-                        <td>2025.04.27</td>
-                        <td>Да</td>
-                        <td>Нет</td>
-                        <td>Нет</td>
+                        <td contenteditable="true">2025.04.27</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">-</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">2025.04.28</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">-</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">2025.04.29</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">-</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">2025.04.30</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">-</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">2025.05.01</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">-</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">2025.05.02</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Да</td>
+                        <td class="cat-column hidden" contenteditable="true">-</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">2025.05.03</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">-</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">2025.05.04</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">-</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">2025.05.05</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">Да</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">2025.05.06</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">2025.05.07</td>
+                        <td contenteditable="true">Нет</td>
+                        <td contenteditable="true">Да</td>
+                        <td contenteditable="true">Нет</td>
+                        <td class="cat-column hidden" contenteditable="true">-</td>
+                        <td class="cat-column hidden" contenteditable="true"></td>
                     </tr>
                 </tbody>
             </table>
@@ -363,9 +549,51 @@
             });
         }
 
+        // Переключение дополнительных столбцов и переменных
+        function toggleCatColumns() {
+            const catColumns = document.querySelectorAll('.cat-column');
+            const catVariables = document.querySelectorAll('.variable.cat');
+            const button = document.querySelector('.add-cat-columns');
+            
+            catColumns.forEach(col => {
+                col.classList.toggle('hidden');
+            });
+            
+            catVariables.forEach(variable => {
+                variable.classList.toggle('hidden');
+            });
+            
+            if (button.textContent === 'Добавить кошачьи столбцы') {
+                button.textContent = 'Убрать кошачьи столбцы';
+                button.style.backgroundColor = '#f44336';
+            } else {
+                button.textContent = 'Добавить кошачьи столбцы';
+                button.style.backgroundColor = '#9c27b0';
+            }
+        }
+
         // Инициализация
         document.addEventListener('DOMContentLoaded', function() {
             loadColumnNames();
+            
+            // Делаем все ячейки таблицы редактируемыми
+            document.querySelectorAll('#dataTable td').forEach(td => {
+                td.setAttribute('contenteditable', 'true');
+            });
+            
+            // Заполняем данные для настроения после кошки
+            const moodAfterCatData = [
+                'Да', '-', '-', '-', '-', 'Да', 'Да', '-', '-', '-', '-', '-', 
+                'Нет', '-', '-', '-', '-', '-', '-', 'Да', '-', '-', '-', '-', 
+                '-', '-', 'Да', 'Нет', '-', '-', '-'
+            ];
+            
+            const moodAfterCatCells = document.querySelectorAll('td[data-field="moodAfterCat"]');
+            moodAfterCatData.forEach((value, index) => {
+                if (index < moodAfterCatCells.length) {
+                    moodAfterCatCells[index].textContent = value;
+                }
+            });
         });
 
         // Drag and Drop функционал
@@ -403,26 +631,32 @@
             });
         });
         
-        // Добавление новой строки в таблицу с следующей датой
+        // Добавление новой строки в таблицу
         function addTableRow() {
             const tbody = document.querySelector('#dataTable tbody');
-            const rows = tbody.querySelectorAll('tr');
-            const lastDate = rows.length > 0 ? rows[rows.length-1].cells[0].textContent : '2025.04.27';
-            
-            // Увеличиваем дату на 1 день
-            const dateParts = lastDate.split('.');
-            const nextDate = new Date(dateParts[2], dateParts[1]-1, dateParts[0]);
-            nextDate.setDate(nextDate.getDate() + 1);
-            
-            const formattedDate = `${String(nextDate.getDate()).padStart(2, '0')}.${String(nextDate.getMonth()+1).padStart(2, '0')}.${nextDate.getFullYear()}`;
-            
             const newRow = document.createElement('tr');
-            newRow.innerHTML = `
-                <td>${formattedDate}</td>
-                <td contenteditable="true"></td>
-                <td contenteditable="true"></td>
-                <td contenteditable="true"></td>
-            `;
+            
+            const catColumnsExist = !document.querySelector('.cat-column').classList.contains('hidden');
+            
+            if (catColumnsExist) {
+                newRow.innerHTML = `
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td class="cat-column" contenteditable="true"></td>
+                    <td class="cat-column" contenteditable="true"></td>
+                `;
+            } else {
+                newRow.innerHTML = `
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td class="cat-column hidden" contenteditable="true"></td>
+                    <td class="cat-column hidden" contenteditable="true"></td>
+                `;
+            }
             
             tbody.appendChild(newRow);
         }
@@ -438,12 +672,13 @@
             
             return Array.from(rows).map(row => {
                 const cells = row.querySelectorAll('td');
-                return {
-                    date: cells[0].textContent,
-                    mood: cells[1].textContent,
-                    success: cells[2].textContent,
-                    gaveUp: cells[3].textContent
-                };
+                const rowData = {};
+                headers.forEach((header, index) => {
+                    if (index < cells.length) {
+                        rowData[header.field] = cells[index].textContent;
+                    }
+                });
+                return rowData;
             });
         }
         
@@ -512,9 +747,9 @@
             showResult("condResult", `Вероятность ${eventText} при условии ${conditionText}: ${probability}%`, false, formula);
         }
         
-        function calculateJointProbability() {
-            const event1Zone = document.getElementById('jointEvent1');
-            const event2Zone = document.getElementById('jointEvent2');
+        function calculateDependentProbability() {
+            const event1Zone = document.getElementById('depEvent1');
+            const event2Zone = document.getElementById('depEvent2');
             
             const event1Text = event1Zone.textContent;
             const event1Type = event1Zone.getAttribute('data-type');
@@ -525,7 +760,7 @@
             const event2Field = event2Zone.getAttribute('data-field');
             
             if (!event1Text || event1Text === " " || !event2Text || event2Text === " ") {
-                showResult("jointResult", "Пожалуйста, выберите оба события", true);
+                showResult("depResult", "Пожалуйста, выберите оба события", true);
                 return;
             }
             
@@ -536,12 +771,18 @@
             const event1Filter = createFilter(event1Field, event1Value);
             const event2Filter = createFilter(event2Field, event2Value);
             
-            const total = data.length;
+            const event1Count = data.filter(event1Filter).length;
             const bothEventsCount = data.filter(item => event1Filter(item) && event2Filter(item)).length;
-            const probability = (bothEventsCount / total * 100).toFixed(2);
             
-            const formula = `P(${event1Text}∩${event2Text}) = Количество(${event1Text} и ${event2Text}) / Общее количество = ${bothEventsCount} / ${total} = ${probability}%`;
-            showResult("jointResult", `Вероятность ${event1Text} и ${event2Text}: ${probability}%`, false, formula);
+            if (event1Count === 0) {
+                showResult("depResult", "Нет данных для первого события", true);
+                return;
+            }
+            
+            const probability = (bothEventsCount / event1Count * 100).toFixed(2);
+            
+            const formula = `P(${event1Text} → ${event2Text}) = P(${event1Text} ∩ ${event2Text}) / P(${event1Text}) = ${bothEventsCount} / ${event1Count} = ${probability}%`;
+            showResult("depResult", `Вероятность ${event1Text} → ${event2Text}: ${probability}%`, false, formula);
         }
         
         function showResult(elementId, message, isError, formula = null) {
