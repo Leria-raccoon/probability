@@ -8,515 +8,433 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 20px;
-            display: flex;
-            background-color: #f8f9fa;
+            padding: 0;
+            background-color: #767f99;
+            color: #333;
             height: 100vh;
             overflow: hidden;
+            display: flex;
         }
-        .main-content {
+        
+        .main-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .content-section {
             flex: 1;
-            padding-right: 20px;
             display: flex;
             flex-direction: column;
             height: 100%;
+            overflow: hidden;
+            padding: 20px;
+            box-sizing: border-box;
         }
-        .data-panel {
+        
+        .table-section {
             width: 30%;
-            padding-left: 20px;
             height: 100%;
-            display: flex;
-            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: #fff;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
         }
-        h1 {
+        
+        h1, h2, h3 {
             color: #2c3e50;
-            margin-bottom: 20px;
-            font-size: 24px;
+            margin-top: 0;
         }
+        
         .panel {
             background-color: white;
             border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
+        
         .variables-container {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            position: sticky;
+            top: 0;
+            background-color: #f5f5f5;
+            z-index: 10;
+            padding-top: 20px;
         }
+        
         .variables {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 10px;
+            margin-top: 15px;
         }
+        
         .variable {
-            padding: 6px 12px;
-            background-color: #e0e0e0;
-            border-radius: 15px;
-            cursor: grab;
+            padding: 8px 12px;
+            background-color: #e1f5fe;
+            border-radius: 4px;
+            cursor: move;
             user-select: none;
-            font-size: 14px;
+            border: 1px solid #b3e5fc;
         }
-        .variable.cat {
-            background-color: #e1bee7;
+        
+        .variable[data-type="positive"] {
+            background-color: #e8f5e9;
+            border-color: #c8e6c9;
         }
+        
+        .variable[data-type="negative"] {
+            background-color: #ffebee;
+            border-color: #ffcdd2;
+        }
+        
         .calculations-container {
             flex: 1;
             overflow-y: auto;
-            padding-right: 5px;
+            padding-bottom: 20px;
         }
+        
         .query-templates {
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            margin-bottom: 15px;
+            gap: 20px;
         }
+        
         .query-template {
-            background-color: #f1f8fe;
-            border: 1px solid #bbdefb;
+            padding: 15px;
+            border: 1px solid #eee;
             border-radius: 6px;
-            padding: 12px;
-            width: 100%;
         }
-        .query-template h3 {
-            margin: 0 0 10px 0;
-            font-size: 16px;
-            color: #1976d2;
-        }
+        
         .drop-zone {
-            min-height: 32px;
-            padding: 8px;
-            background-color: #e8f5e9;
+            display: inline-block;
+            min-width: 50px;
+            min-height: 20px;
+            padding: 2px 5px;
+            border: 1px dashed #999;
             border-radius: 4px;
-            margin: 4px 0;
-            border: 1px dashed #81c784;
-            font-size: 14px;
+            background-color: #f9f9f9;
         }
+        
         .drop-zone.highlight {
-            background-color: #c8e6c9;
-        }
-        button {
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-top: 8px;
-        }
-        button:hover {
-            background-color: #3e9142;
-        }
-        .result {
-            margin-top: 12px;
-            padding: 12px;
             background-color: #e3f2fd;
-            border-radius: 6px;
-            border-left: 4px solid #2196f3;
-            font-size: 14px;
+            border-color: #2196f3;
         }
-        .formula {
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            background-color: #f5f5f5;
-            padding: 8px;
-            border-radius: 4px;
-            margin-top: 8px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 10px;
-            font-size: 13px;
-        }
-        th, td {
-            padding: 6px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-            position: sticky;
-            top: 0;
-        }
-        .add-row {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 8px;
-            font-size: 13px;
-            width: 100%;
-        }
-        .math-symbol {
-            font-family: 'Times New Roman', serif;
-            font-style: normal;
-        }
-        .table-container {
-            flex: 1;
-            overflow-y: auto;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        #dataTable thead th {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-        td[contenteditable="true"]:focus {
-            outline: 2px solid #4caf50;
-            background-color: #f8fff8;
-        }
-        .add-cat-columns {
+        
+        button {
+            padding: 8px 16px;
             background-color: #9c27b0;
             color: white;
             border: none;
-            padding: 8px 15px;
             border-radius: 4px;
             cursor: pointer;
+            margin-top: 10px;
             font-size: 14px;
-            margin-bottom: 15px;
-            align-self: flex-end;
         }
-        .add-cat-columns:hover {
+        
+        button:hover {
             background-color: #7b1fa2;
         }
+        
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            min-height: 50px;
+        }
+        
+        .formula {
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 14px;
+            color: #555;
+        }
+         
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
         .hidden {
             display: none;
         }
+        
+        .add-row {
+    margin-top: 15px;
+    background-color: #4caf50;
+    position: relative; /* Убедимся, что кнопка не прилипает к таблице */
+    z-index: 1; /* Поднимаем над таблицей */
+}
+        
+        .add-row:hover {
+            background-color: #388e3c;
+        }
+        
+        .add-cat-columns {
+            background-color: #9c27b0;
+        }
+        
+        .add-cat-columns:hover {
+            background-color: #7b1fa2;
+        }
+        
+        [contenteditable="true"]:focus {
+            outline: 2px solid #2196f3;
+            background-color: #e3f2fd;
+        }
+        
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .table-container {
+    margin-top: 15px;
+    max-height: calc(100vh - 200px); /* Ограничиваем высоту */
+    overflow-y: auto; /* Включаем вертикальную прокрутку */
+    border: 1px solid #ddd; /* Добавляем границу для визуального отделения */
+    border-radius: 4px; /* Скругляем углы */
+}
+
+#dataTable thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f2f2f2;
+    z-index: 10;
+}
     </style>
 </head>
 <body>
-    <div class="main-content">
-        <h1>Вероятностный калькулятор</h1>
-        
-        <div class="panel variables-container">
-            <h2>Переменные для анализа</h2>
-            <div class="variables" id="variablesContainer">
-                <div class="variable" draggable="true" data-type="positive" data-field="mood">Хорошее настроение</div>
-                <div class="variable" draggable="true" data-type="negative" data-field="mood">Плохое настроение</div>
-                <div class="variable" draggable="true" data-type="positive" data-field="success">Успех в учебе</div>
-                <div class="variable" draggable="true" data-type="negative" data-field="success">Неуспех в учебе</div>
-                <div class="variable" draggable="true" data-type="positive" data-field="gaveUp">Сдалась</div>
-                <div class="variable" draggable="true" data-type="negative" data-field="gaveUp">Не сдалась</div>
-                
-                <div class="variable cat hidden" draggable="true" data-type="positive" data-field="moodAfterCat">Настроение после кошки</div>
-                <div class="variable cat hidden" draggable="true" data-type="negative" data-field="moodAfterCat">Настроение не изменилось</div>
-                <div class="variable cat hidden" draggable="true" data-type="positive" data-field="newColumn">Новый параметр</div>
-                <div class="variable cat hidden" draggable="true" data-type="negative" data-field="newColumn">Не новый параметр</div>
-            </div>
-        </div>
+    <div class="main-container">
+        <div class="content-section">
+            <h1>Вероятностный калькулятор</h1>
             
-        <div class="calculations-container">
-            <div class="panel">
-                <div class="query-templates">
-                    <div class="query-template">
-                        <h3>Простая вероятность</h3>
-                        <p>P(<span class="drop-zone" id="simpleEvent"></span>)</p>
-                        <button onclick="calculateSimpleProbability()">Рассчитать</button>
-                        <div class="result" id="simpleResult">
-                            <p>Выберите событие для расчета.</p>
-                        </div>
-                    </div>
+            <div class="panel variables-container">
+                <h2>Переменные для анализа</h2>
+                <div class="variables" id="variablesContainer">
+                    <div class="variable" draggable="true" data-type="positive" data-field="mood">Хорошее настроение</div>
+                    <div class="variable" draggable="true" data-type="negative" data-field="mood">Плохое настроение</div>
+                    <div class="variable" draggable="true" data-type="positive" data-field="success">Успех в учебе</div>
+                    <div class="variable" draggable="true" data-type="negative" data-field="success">Неуспех в учебе</div>
+                    <div class="variable" draggable="true" data-type="positive" data-field="gaveUp">Сдалась</div>
+                    <div class="variable" draggable="true" data-type="negative" data-field="gaveUp">Не сдалась</div>
                     
-                    <div class="query-template">
-                        <h3>Условная вероятность</h3>
-                        <p>P(<span class="drop-zone" id="condEvent"></span> | <span class="drop-zone" id="condCondition"></span>)</p>
-                        <button onclick="calculateConditionalProbability()">Рассчитать</button>
-                        <div class="result" id="condResult">
-                            <p>Выберите событие и условие.</p>
+                    <div class="variable cat hidden" draggable="true" data-type="positive" data-field="moodAfterCat">Настроение после кошки</div>
+                    <div class="variable cat hidden" draggable="true" data-type="negative" data-field="moodAfterCat">Настроение не изменилось</div>
+                    <div class="variable cat hidden" draggable="true" data-type="positive" data-field="newColumn">Новый параметр</div>
+                    <div class="variable cat hidden" draggable="true" data-type="negative" data-field="newColumn">Не новый параметр</div>
+                </div>
+            </div>
+                
+            <div class="calculations-container">
+                <div class="panel">
+                    <div class="query-templates">
+                        <div class="query-template">
+                            <h3>Простая вероятность</h3>
+                            <p>P(<span class="drop-zone" id="simpleEvent"></span>)</p>
+                            <button onclick="calculateSimpleProbability()">Рассчитать</button>
+                            <div class="result" id="simpleResult">
+                                <p>Выберите событие для расчета.</p>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="query-template">
-                        <h3>Зависимая вероятность</h3>
-                        <p>P(<span class="drop-zone" id="depEvent1"></span> → <span class="drop-zone" id="depEvent2"></span>)</p>
-                        <button onclick="calculateDependentProbability()">Рассчитать</button>
-                        <div class="result" id="depResult">
-                            <p>Выберите два зависимых события.</p>
+                        
+                        <div class="query-template">
+                            <h3>Условная вероятность</h3>
+                            <p>P(<span class="drop-zone" id="condEvent"></span> | <span class="drop-zone" id="condCondition"></span>)</p>
+                            <button onclick="calculateConditionalProbability()">Рассчитать</button>
+                            <div class="result" id="condResult">
+                                <p>Выберите событие и условие.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="query-template">
+                            <h3>Зависимая вероятность</h3>
+                            <p>P(<span class="drop-zone" id="depEvent1"></span> → <span class="drop-zone" id="depEvent2"></span>)</p>
+                            <button onclick="calculateDependentProbability()">Рассчитать</button>
+                            <div class="result" id="depResult">
+                                <p>Выберите два зависимых события.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    
-    <div class="data-panel panel">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h2>Таблица данных</h2>
-            <button class="add-cat-columns" onclick="toggleCatColumns()">Добавить кошачьи столбцы</button>
+        
+        <div class="table-section">
+            <div class="table-header">
+                <h2>Таблица данных</h2>
+                <button class="add-cat-columns" onclick="toggleCatColumns()">Добавить кошачьи столбцы</button>
+            </div>
+            <div class="table-container">
+                <table id="dataTable">
+                    <thead>
+                        <tr>
+                            <th contenteditable="true" data-field="date">Дата</th>
+                            <th contenteditable="true" data-field="mood">Хорошее настроение</th>
+                            <th contenteditable="true" data-field="success">Успех в учебе</th>
+                            <th contenteditable="true" data-field="gaveUp">Сдалась?</th>
+                            <th class="cat-column hidden" contenteditable="true" data-field="moodAfterCat">Настроение после прихода Мурки</th>
+                            <th class="cat-column hidden" contenteditable="true" data-field="newColumn">Новый параметр</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Строки будут добавляться динамически -->
+                    </tbody>
+                </table>
+            </div>
+            <button class="add-row" onclick="addTableRow()">+ Добавить строку</button>
         </div>
-        <div class="table-container">
-            <table id="dataTable">
-                <thead>
-                    <tr>
-                        <th contenteditable="true" data-field="date">Дата</th>
-                        <th contenteditable="true" data-field="mood">Хорошее настроение</th>
-                        <th contenteditable="true" data-field="success">Успех в учебе</th>
-                        <th contenteditable="true" data-field="gaveUp">Сдалась?</th>
-                        <th class="cat-column hidden" contenteditable="true" data-field="moodAfterCat">Настроение после прихода Мурки</th>
-                        <th class="cat-column hidden" contenteditable="true" data-field="newColumn">Новый параметр</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td contenteditable="true">2025.04.07</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">Да</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.04.08</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">-</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.04.09</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">-</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.04.10</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Да</td>
-                        <td class="cat-column hidden" contenteditable="true">-</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.04.11</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Да</td>
-                        <td class="cat-column hidden" contenteditable="true">-</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.04.12</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">Да</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.04.13</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">Да</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.04.14</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">-</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.04.15</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">-</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.04.16</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.04.17</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">-</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.04.18</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">-</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.04.19</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">-</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.04.20</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">Да</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.04.21</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">-</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.04.22</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">-</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.04.23</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">-</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.04.24</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">-</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.04.25</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">-</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.04.26</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">-</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.04.27</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">-</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.04.28</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">-</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.04.29</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">-</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.04.30</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">-</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.05.01</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">-</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.05.02</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Да</td>
-                        <td class="cat-column hidden" contenteditable="true">-</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.05.03</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">-</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.05.04</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">-</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.05.05</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">Да</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.05.06</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">2025.05.07</td>
-                        <td contenteditable="true">Нет</td>
-                        <td contenteditable="true">Да</td>
-                        <td contenteditable="true">Нет</td>
-                        <td class="cat-column hidden" contenteditable="true">-</td>
-                        <td class="cat-column hidden" contenteditable="true"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <button class="add-row" onclick="addTableRow()">+ Добавить строку</button>
     </div>
-
     <script>
+        // Инициализация данных при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTableData();
+            loadColumnNames();
+            setupTableEditableCells();
+            setupDragAndDrop();
+            
+            // Заполняем начальные данные, если таблица пуста
+            if (document.querySelectorAll('#tableBody tr').length === 0) {
+                loadInitialData();
+            }
+        });
+        
+        // Загрузка данных таблицы из localStorage
+        function loadTableData() {
+            const savedData = localStorage.getItem('tableData');
+            const tableBody = document.getElementById('tableBody');
+            
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                tableBody.innerHTML = '';
+                
+                data.forEach(row => {
+                    const newRow = document.createElement('tr');
+                    
+                    // Проверяем, есть ли кошачьи колонки
+                    const catColumnsExist = !document.querySelector('.cat-column').classList.contains('hidden');
+                    
+                    if (catColumnsExist) {
+                        newRow.innerHTML = `
+                            <td contenteditable="true">${row.date || ''}</td>
+                            <td contenteditable="true">${row.mood || ''}</td>
+                            <td contenteditable="true">${row.success || ''}</td>
+                            <td contenteditable="true">${row.gaveUp || ''}</td>
+                            <td class="cat-column" contenteditable="true">${row.moodAfterCat || ''}</td>
+                            <td class="cat-column" contenteditable="true">${row.newColumn || ''}</td>
+                        `;
+                    } else {
+                        newRow.innerHTML = `
+                            <td contenteditable="true">${row.date || ''}</td>
+                            <td contenteditable="true">${row.mood || ''}</td>
+                            <td contenteditable="true">${row.success || ''}</td>
+                            <td contenteditable="true">${row.gaveUp || ''}</td>
+                            <td class="cat-column hidden" contenteditable="true">${row.moodAfterCat || ''}</td>
+                            <td class="cat-column hidden" contenteditable="true">${row.newColumn || ''}</td>
+                        `;
+                    }
+                    
+                    tableBody.appendChild(newRow);
+                });
+            }
+        }
+        
+        // Сохранение данных таблицы в localStorage
+        function saveTableData() {
+            const table = document.getElementById('dataTable');
+            const headers = Array.from(table.querySelectorAll('thead th')).map(th => ({
+                text: th.textContent,
+                field: th.getAttribute('data-field')
+            }));
+            const rows = table.querySelectorAll('tbody tr');
+            
+            const data = Array.from(rows).map(row => {
+                const cells = row.querySelectorAll('td');
+                const rowData = {};
+                headers.forEach((header, index) => {
+                    if (index < cells.length) {
+                        rowData[header.field] = cells[index].textContent;
+                    }
+                });
+                return rowData;
+            });
+            
+            localStorage.setItem('tableData', JSON.stringify(data));
+        }
+        
+        // Загрузка начальных данных
+        function loadInitialData() {
+            const initialData = [
+                { date: '2025.04.07', mood: 'Да', success: 'Да', gaveUp: 'Нет', moodAfterCat: 'Да' },
+                { date: '2025.04.08', mood: 'Да', success: 'Да', gaveUp: 'Нет', moodAfterCat: '-' },
+                { date: '2025.04.09', mood: 'Да', success: 'Да', gaveUp: 'Нет', moodAfterCat: '-' },
+                { date: '2025.04.10', mood: 'Нет', success: 'Нет', gaveUp: 'Да', moodAfterCat: '-' },
+                { date: '2025.04.11', mood: 'Нет', success: 'Нет', gaveUp: 'Да', moodAfterCat: '-' },
+                { date: '2025.04.12', mood: 'Нет', success: 'Нет', gaveUp: 'Нет', moodAfterCat: 'Да' },
+                { date: '2025.04.13', mood: 'Да', success: 'Да', gaveUp: 'Нет', moodAfterCat: 'Да' },
+                { date: '2025.04.14', mood: 'Нет', success: 'Да', gaveUp: 'Нет', moodAfterCat: '-' },
+                { date: '2025.04.15', mood: 'Нет', success: 'Нет', gaveUp: 'Нет', moodAfterCat: '-' },
+                { date: '2025.04.16', mood: 'Нет', success: 'Да', gaveUp: 'Нет', moodAfterCat: 'Нет' },
+                { date: '2025.04.17', mood: 'Да', success: 'Нет', gaveUp: 'Нет', moodAfterCat: '-' },
+                { date: '2025.04.18', mood: 'Да', success: 'Да', gaveUp: 'Нет', moodAfterCat: '-' },
+                { date: '2025.04.19', mood: 'Нет', success: 'Нет', gaveUp: 'Нет', moodAfterCat: '-' },
+                { date: '2025.04.20', mood: 'Да', success: 'Да', gaveUp: 'Нет', moodAfterCat: 'Да' },
+                { date: '2025.04.21', mood: 'Да', success: 'Да', gaveUp: 'Нет', moodAfterCat: '-' },
+                { date: '2025.04.22', mood: 'Да', success: 'Нет', gaveUp: 'Нет', moodAfterCat: '-' },
+                { date: '2025.04.23', mood: 'Нет', success: 'Да', gaveUp: 'Нет', moodAfterCat: '-' },
+                { date: '2025.04.24', mood: 'Нет', success: 'Нет', gaveUp: 'Нет', moodAfterCat: '-' },
+                { date: '2025.04.25', mood: 'Нет', success: 'Нет', gaveUp: 'Нет', moodAfterCat: '-' },
+                { date: '2025.04.26', mood: 'Нет', success: 'Да', gaveUp: 'Нет', moodAfterCat: '-' },
+                { date: '2025.04.27', mood: 'Да', success: 'Нет', gaveUp: 'Нет', moodAfterCat: '-' },
+                { date: '2025.04.28', mood: 'Нет', success: 'Да', gaveUp: 'Нет', moodAfterCat: '-' },
+                { date: '2025.04.29', mood: 'Нет', success: 'Нет', gaveUp: 'Нет', moodAfterCat: '-' },
+                { date: '2025.04.30', mood: 'Нет', success: 'Да', gaveUp: 'Нет', moodAfterCat: '-' },
+                { date: '2025.05.01', mood: 'Нет', success: 'Да', gaveUp: 'Нет', moodAfterCat: '-' },
+                { date: '2025.05.02', mood: 'Нет', success: 'Нет', gaveUp: 'Да', moodAfterCat: '-' },
+                { date: '2025.05.03', mood: 'Нет', success: 'Нет', gaveUp: 'Нет', moodAfterCat: '-' },
+                { date: '2025.05.04', mood: 'Да', success: 'Да', gaveUp: 'Нет', moodAfterCat: '-' },
+                { date: '2025.05.05', mood: 'Нет', success: 'Да', gaveUp: 'Нет', moodAfterCat: 'Да' },
+                { date: '2025.05.06', mood: 'Да', success: 'Да', gaveUp: 'Нет', moodAfterCat: 'Нет' },
+                { date: '2025.05.07', mood: 'Нет', success: 'Да', gaveUp: 'Нет', moodAfterCat: '-' }
+            ];
+            
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+            
+            initialData.forEach(row => {
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td contenteditable="true">${row.date}</td>
+                    <td contenteditable="true">${row.mood}</td>
+                    <td contenteditable="true">${row.success}</td>
+                    <td contenteditable="true">${row.gaveUp}</td>
+                    <td class="cat-column hidden" contenteditable="true">${row.moodAfterCat}</td>
+                    <td class="cat-column hidden" contenteditable="true"></td>
+                `;
+                tableBody.appendChild(newRow);
+            });
+            
+            saveTableData();
+        }
+        
         // Загрузка сохраненных названий столбцов и обновление переменных
         function loadColumnNames() {
             const headers = document.querySelectorAll('#dataTable th[contenteditable="true"]');
@@ -532,10 +450,11 @@
                     const newName = this.textContent;
                     localStorage.setItem(`column_${field}`, newName);
                     updateVariableNames(field, newName);
+                    saveTableData();
                 });
             });
         }
-
+        
         // Обновление названий переменных
         function updateVariableNames(field, newName) {
             const variables = document.querySelectorAll(`.variable[data-field="${field}"]`);
@@ -548,7 +467,19 @@
                 }
             });
         }
-
+        
+        // Настройка редактируемых ячеек таблицы
+        function setupTableEditableCells() {
+            document.querySelectorAll('#dataTable td').forEach(td => {
+                td.setAttribute('contenteditable', 'true');
+                
+                // Сохраняем данные при изменении ячейки
+                td.addEventListener('blur', function() {
+                    saveTableData();
+                });
+            });
+        }
+        
         // Переключение дополнительных столбцов и переменных
         function toggleCatColumns() {
             const catColumns = document.querySelectorAll('.cat-column');
@@ -570,70 +501,50 @@
                 button.textContent = 'Добавить кошачьи столбцы';
                 button.style.backgroundColor = '#9c27b0';
             }
+            
+            saveTableData();
         }
-
-        // Инициализация
-        document.addEventListener('DOMContentLoaded', function() {
-            loadColumnNames();
-            
-            // Делаем все ячейки таблицы редактируемыми
-            document.querySelectorAll('#dataTable td').forEach(td => {
-                td.setAttribute('contenteditable', 'true');
-            });
-            
-            // Заполняем данные для настроения после кошки
-            const moodAfterCatData = [
-                'Да', '-', '-', '-', '-', 'Да', 'Да', '-', '-', '-', '-', '-', 
-                'Нет', '-', '-', '-', '-', '-', '-', 'Да', '-', '-', '-', '-', 
-                '-', '-', 'Да', 'Нет', '-', '-', '-'
-            ];
-            
-            const moodAfterCatCells = document.querySelectorAll('td[data-field="moodAfterCat"]');
-            moodAfterCatData.forEach((value, index) => {
-                if (index < moodAfterCatCells.length) {
-                    moodAfterCatCells[index].textContent = value;
-                }
-            });
-        });
-
-        // Drag and Drop функционал
-        const variables = document.querySelectorAll('.variable');
-        const dropZones = document.querySelectorAll('.drop-zone');
         
-        variables.forEach(variable => {
-            variable.addEventListener('dragstart', function(e) {
-                e.dataTransfer.setData('text/plain', JSON.stringify({
-                    text: this.textContent,
-                    type: this.getAttribute('data-type'),
-                    field: this.getAttribute('data-field')
-                }));
-            });
-        });
-        
-        dropZones.forEach(zone => {
-            zone.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                this.classList.add('highlight');
+        // Настройка drag and drop
+        function setupDragAndDrop() {
+            const variables = document.querySelectorAll('.variable');
+            const dropZones = document.querySelectorAll('.drop-zone');
+            
+            variables.forEach(variable => {
+                variable.addEventListener('dragstart', function(e) {
+                    e.dataTransfer.setData('text/plain', JSON.stringify({
+                        text: this.textContent,
+                        type: this.getAttribute('data-type'),
+                        field: this.getAttribute('data-field')
+                    }));
+                });
             });
             
-            zone.addEventListener('dragleave', function() {
-                this.classList.remove('highlight');
-            });
-            
-            zone.addEventListener('drop', function(e) {
-                e.preventDefault();
-                this.classList.remove('highlight');
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    this.classList.add('highlight');
+                });
                 
-                const data = JSON.parse(e.dataTransfer.getData('text/plain'));
-                this.textContent = data.text;
-                this.setAttribute('data-type', data.type);
-                this.setAttribute('data-field', data.field);
+                zone.addEventListener('dragleave', function() {
+                    this.classList.remove('highlight');
+                });
+                
+                zone.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('highlight');
+                    
+                    const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+                    this.textContent = data.text;
+                    this.setAttribute('data-type', data.type);
+                    this.setAttribute('data-field', data.field);
+                });
             });
-        });
+        }
         
         // Добавление новой строки в таблицу
         function addTableRow() {
-            const tbody = document.querySelector('#dataTable tbody');
+            const tbody = document.getElementById('tableBody');
             const newRow = document.createElement('tr');
             
             const catColumnsExist = !document.querySelector('.cat-column').classList.contains('hidden');
@@ -659,9 +570,18 @@
             }
             
             tbody.appendChild(newRow);
+            
+            // Настройка обработчиков событий для новых ячеек
+            newRow.querySelectorAll('td').forEach(td => {
+                td.addEventListener('blur', function() {
+                    saveTableData();
+                });
+            });
+            
+            saveTableData();
         }
         
-        // Функции расчета
+        // Функции расчета вероятностей
         function getData() {
             const table = document.getElementById('dataTable');
             const headers = Array.from(table.querySelectorAll('thead th')).map(th => ({
