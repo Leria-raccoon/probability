@@ -3,315 +3,568 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Калькулятор вероятностей</title>
+    <title>Вероятностный калькулятор</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
+            margin: 0;
             padding: 20px;
-            background-color: #f5f5f5;
+            display: flex;
+            background-color: #f8f9fa;
+        }
+        .main-content {
+            flex: 1;
+            padding-right: 20px;
+        }
+        .data-panel {
+            width: 25%;
+            padding-left: 20px;
         }
         h1 {
-            color: #333;
-            text-align: center;
-        }
-        .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .data-input {
+            color: #2c3e50;
             margin-bottom: 20px;
+            font-size: 24px;
         }
-        textarea {
-            width: 100%;
-            height: 150px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            resize: vertical;
+        .panel {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        .controls {
+        .variables {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 15px;
         }
-        .drag-item {
-            padding: 8px 12px;
+        .variable {
+            padding: 6px 12px;
             background-color: #e0e0e0;
-            border-radius: 4px;
-            cursor: move;
+            border-radius: 15px;
+            cursor: grab;
             user-select: none;
+            font-size: 14px;
         }
-        .query-builder {
-            background-color: #f0f0f0;
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            min-height: 60px;
+        .query-templates {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+        .query-template {
+            background-color: #f1f8fe;
+            border: 1px solid #bbdefb;
+            border-radius: 6px;
+            padding: 12px;
+            min-width: 220px;
+            flex-shrink: 0;
+        }
+        .query-template h3 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            color: #1976d2;
         }
         .drop-zone {
-            display: inline-block;
-            padding: 5px 10px;
-            background-color: #d4edda;
+            min-height: 32px;
+            padding: 8px;
+            background-color: #e8f5e9;
             border-radius: 4px;
-            margin: 0 5px;
-            min-width: 30px;
-            min-height: 20px;
-            vertical-align: middle;
+            margin: 4px 0;
+            border: 1px dashed #81c784;
+            font-size: 14px;
+        }
+        .drop-zone.highlight {
+            background-color: #c8e6c9;
         }
         button {
-            background-color: #4CAF50;
+            background-color: #4caf50;
             color: white;
             border: none;
-            padding: 10px 15px;
+            padding: 8px 15px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
+            margin-top: 8px;
         }
         button:hover {
-            background-color: #45a049;
+            background-color: #3e9142;
         }
         .result {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e7f3fe;
-            border-left: 5px solid #2196F3;
+            margin-top: 12px;
+            padding: 12px;
+            background-color: #e3f2fd;
+            border-radius: 6px;
+            border-left: 4px solid #2196f3;
+            font-size: 14px;
+        }
+        .formula {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            background-color: #f5f5f5;
+            padding: 8px;
             border-radius: 4px;
+            margin-top: 8px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 13px;
         }
         th, td {
+            padding: 6px;
             border: 1px solid #ddd;
-            padding: 8px;
             text-align: left;
         }
         th {
             background-color: #f2f2f2;
+            position: sticky;
+            top: 0;
         }
-        .formula {
-            font-family: monospace;
-            background-color: #f8f9fa;
-            padding: 10px;
+        .add-row {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 6px 12px;
             border-radius: 4px;
-            margin-top: 10px;
-            overflow-x: auto;
+            cursor: pointer;
+            margin-top: 8px;
+            font-size: 13px;
+        }
+        .math-symbol {
+            font-family: 'Times New Roman', serif;
+            font-style: normal;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Калькулятор вероятностей</h1>
+    <div class="main-content">
+        <h1>Вероятностный калькулятор</h1>
         
-        <div class="data-input">
-            <h3>Введите данные (построчно в формате: Дата, Настроение, Успех, Сдалась):</h3>
-            <textarea id="dataInput">2025.04.07,Да,Да,Нет
-2025.04.08,Да,Да,Нет
-2025.04.09,Да,Да,Нет
-2025.04.10,Нет,Нет,Да
-2025.04.11,Нет,Нет,Да
-2025.04.12,Нет,Нет,Нет
-2025.04.13,Да,Да,Нет
-2025.04.14,Нет,Да,Нет
-2025.04.15,Нет,Нет,Нет
-2025.04.16,Нет,Да,Нет</textarea>
-            <button id="loadData">Загрузить данные</button>
+        <div class="panel">
+            <h2>Переменные для анализа</h2>
+            <div class="variables" id="variablesContainer">
+                <div class="variable" draggable="true" data-type="positive" data-field="mood">Хорошее настроение</div>
+                <div class="variable" draggable="true" data-type="negative" data-field="mood">Плохое настроение</div>
+                <div class="variable" draggable="true" data-type="positive" data-field="success">Успех в учебе</div>
+                <div class="variable" draggable="true" data-type="negative" data-field="success">Неуспех в учебе</div>
+                <div class="variable" draggable="true" data-type="positive" data-field="gaveUp">Сдалась</div>
+                <div class="variable" draggable="true" data-type="negative" data-field="gaveUp">Не сдалась</div>
+            </div>
+            
+            <div class="query-templates">
+                <div class="query-template">
+                    <h3>Простая вероятность</h3>
+                    <p>P(<span class="drop-zone" id="simpleEvent"></span>)</p>
+                    <button onclick="calculateSimpleProbability()">Рассчитать</button>
+                    <div class="result" id="simpleResult">
+                        <p>Выберите событие для расчета.</p>
+                    </div>
+                </div>
+                
+                <div class="query-template">
+                    <h3>Условная вероятность</h3>
+                    <p>P(<span class="drop-zone" id="condEvent"></span> | <span class="drop-zone" id="condCondition"></span>)</p>
+                    <button onclick="calculateConditionalProbability()">Рассчитать</button>
+                    <div class="result" id="condResult">
+                        <p>Выберите событие и условие.</p>
+                    </div>
+                </div>
+                
+                <div class="query-template">
+                    <h3>Совместная вероятность</h3>
+                    <p>P(<span class="drop-zone" id="jointEvent1"></span> ∩ <span class="drop-zone" id="jointEvent2"></span>)</p>
+                    <button onclick="calculateJointProbability()">Рассчитать</button>
+                    <div class="result" id="jointResult">
+                        <p>Выберите два события.</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <div id="dataTable"></div>
-        
-        <div class="controls">
-            <h3>Доступные условия:</h3>
-            <div class="drag-item" draggable="true" data-type="event">Хорошее настроение</div>
-            <div class="drag-item" draggable="true" data-type="event">Плохое настроение</div>
-            <div class="drag-item" draggable="true" data-type="event">Успех в учебе</div>
-            <div class="drag-item" draggable="true" data-type="event">Неуспех в учебе</div>
-            <div class="drag-item" draggable="true" data-type="event">Сдалась</div>
-            <div class="drag-item" draggable="true" data-type="event">Не сдалась</div>
+    </div>
+    
+    <div class="data-panel panel">
+        <h2>Таблица данных</h2>
+        <div class="table-container">
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th contenteditable="true" data-field="date">Дата</th>
+                        <th contenteditable="true" data-field="mood">Настроение</th>
+                        <th contenteditable="true" data-field="success">Успех</th>
+                        <th contenteditable="true" data-field="gaveUp">Сдалась</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2025.04.07</td>
+                        <td>Да</td>
+                        <td>Да</td>
+                        <td>Нет</td>
+                    </tr>
+                    <tr>
+                        <td>2025.04.08</td>
+                        <td>Да</td>
+                        <td>Да</td>
+                        <td>Нет</td>
+                    </tr>
+                    <tr>
+                        <td>2025.04.09</td>
+                        <td>Да</td>
+                        <td>Да</td>
+                        <td>Нет</td>
+                    </tr>
+                    <tr>
+                        <td>2025.04.10</td>
+                        <td>Нет</td>
+                        <td>Нет</td>
+                        <td>Да</td>
+                    </tr>
+                    <tr>
+                        <td>2025.04.11</td>
+                        <td>Нет</td>
+                        <td>Нет</td>
+                        <td>Да</td>
+                    </tr>
+                    <tr>
+                        <td>2025.04.12</td>
+                        <td>Нет</td>
+                        <td>Нет</td>
+                        <td>Нет</td>
+                    </tr>
+                    <tr>
+                        <td>2025.04.13</td>
+                        <td>Да</td>
+                        <td>Да</td>
+                        <td>Нет</td>
+                    </tr>
+                    <tr>
+                        <td>2025.04.14</td>
+                        <td>Нет</td>
+                        <td>Да</td>
+                        <td>Нет</td>
+                    </tr>
+                    <tr>
+                        <td>2025.04.15</td>
+                        <td>Нет</td>
+                        <td>Нет</td>
+                        <td>Нет</td>
+                    </tr>
+                    <tr>
+                        <td>2025.04.16</td>
+                        <td>Нет</td>
+                        <td>Да</td>
+                        <td>Нет</td>
+                    </tr>
+                    <tr>
+                        <td>2025.04.17</td>
+                        <td>Да</td>
+                        <td>Нет</td>
+                        <td>Нет</td>
+                    </tr>
+                    <tr>
+                        <td>2025.04.18</td>
+                        <td>Да</td>
+                        <td>Да</td>
+                        <td>Нет</td>
+                    </tr>
+                    <tr>
+                        <td>2025.04.19</td>
+                        <td>Нет</td>
+                        <td>Нет</td>
+                        <td>Нет</td>
+                    </tr>
+                    <tr>
+                        <td>2025.04.20</td>
+                        <td>Да</td>
+                        <td>Да</td>
+                        <td>Нет</td>
+                    </tr>
+                    <tr>
+                        <td>2025.04.21</td>
+                        <td>Да</td>
+                        <td>Да</td>
+                        <td>Нет</td>
+                    </tr>
+                    <tr>
+                        <td>2025.04.22</td>
+                        <td>Да</td>
+                        <td>Нет</td>
+                        <td>Нет</td>
+                    </tr>
+                    <tr>
+                        <td>2025.04.23</td>
+                        <td>Нет</td>
+                        <td>Да</td>
+                        <td>Нет</td>
+                    </tr>
+                    <tr>
+                        <td>2025.04.24</td>
+                        <td>Нет</td>
+                        <td>Нет</td>
+                        <td>Нет</td>
+                    </tr>
+                    <tr>
+                        <td>2025.04.25</td>
+                        <td>Нет</td>
+                        <td>Нет</td>
+                        <td>Нет</td>
+                    </tr>
+                    <tr>
+                        <td>2025.04.26</td>
+                        <td>Нет</td>
+                        <td>Да</td>
+                        <td>Нет</td>
+                    </tr>
+                    <tr>
+                        <td>2025.04.27</td>
+                        <td>Да</td>
+                        <td>Нет</td>
+                        <td>Нет</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        
-        <div class="query-builder">
-            <h3>Построитель запроса:</h3>
-            <p>Какая вероятность 
-                <span class="drop-zone" id="eventDrop">[перетащите событие сюда]</span> 
-                если 
-                <span class="drop-zone" id="condition1Drop">[перетащите условие сюда]</span>
-                и
-                <span class="drop-zone" id="condition2Drop">[перетащите условие сюда]</span>?
-            </p>
-            <button id="calculateBtn">Рассчитать</button>
-        </div>
-        
-        <div class="result" id="result">
-            <h3>Результат:</h3>
-            <p>Загрузите данные и постройте запрос для расчета.</p>
-        </div>
+        <button class="add-row" onclick="addTableRow()">+ Добавить строку</button>
     </div>
 
     <script>
-        let loadedData = [];
-        
-        document.getElementById('loadData').addEventListener('click', function() {
-            const inputText = document.getElementById('dataInput').value.trim();
-            const lines = inputText.split('\n');
-            
-            loadedData = [];
-            for (const line of lines) {
-                const parts = line.split(',');
-                if (parts.length === 4) {
-                    loadedData.push({
-                        date: parts[0].trim(),
-                        mood: parts[1].trim(),
-                        success: parts[2].trim(),
-                        gaveUp: parts[3].trim()
-                    });
+        // Загрузка сохраненных названий столбцов и обновление переменных
+        function loadColumnNames() {
+            const headers = document.querySelectorAll('#dataTable th[contenteditable="true"]');
+            headers.forEach(header => {
+                const field = header.getAttribute('data-field');
+                const savedName = localStorage.getItem(`column_${field}`);
+                if (savedName) {
+                    header.textContent = savedName;
+                    updateVariableNames(field, savedName);
                 }
-            }
-            
-            // Отображаем таблицу с данными
-            renderDataTable();
-            
-            document.getElementById('result').innerHTML = `
-                <h3>Результат:</h3>
-                <p>Данные успешно загружены (${loadedData.length} записей). Постройте запрос для расчета.</p>
-            `;
-        });
-        
-        function renderDataTable() {
-            const tableHtml = `
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Дата</th>
-                            <th>Настроение</th>
-                            <th>Успех</th>
-                            <th>Сдалась</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${loadedData.map(item => `
-                            <tr>
-                                <td>${item.date}</td>
-                                <td>${item.mood}</td>
-                                <td>${item.success}</td>
-                                <td>${item.gaveUp}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-            document.getElementById('dataTable').innerHTML = tableHtml;
+                
+                header.addEventListener('blur', function() {
+                    const newName = this.textContent;
+                    localStorage.setItem(`column_${field}`, newName);
+                    updateVariableNames(field, newName);
+                });
+            });
         }
-        
+
+        // Обновление названий переменных
+        function updateVariableNames(field, newName) {
+            const variables = document.querySelectorAll(`.variable[data-field="${field}"]`);
+            variables.forEach(variable => {
+                const type = variable.getAttribute('data-type');
+                if (type === 'positive') {
+                    variable.textContent = newName;
+                } else {
+                    variable.textContent = 'Не ' + newName.toLowerCase();
+                }
+            });
+        }
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            loadColumnNames();
+        });
+
         // Drag and Drop функционал
-        const dragItems = document.querySelectorAll('.drag-item');
+        const variables = document.querySelectorAll('.variable');
         const dropZones = document.querySelectorAll('.drop-zone');
         
-        dragItems.forEach(item => {
-            item.addEventListener('dragstart', function(e) {
-                e.dataTransfer.setData('text/plain', this.textContent);
+        variables.forEach(variable => {
+            variable.addEventListener('dragstart', function(e) {
+                e.dataTransfer.setData('text/plain', JSON.stringify({
+                    text: this.textContent,
+                    type: this.getAttribute('data-type'),
+                    field: this.getAttribute('data-field')
+                }));
             });
         });
         
         dropZones.forEach(zone => {
             zone.addEventListener('dragover', function(e) {
                 e.preventDefault();
-                this.style.backgroundColor = '#c3e6cb';
+                this.classList.add('highlight');
             });
             
             zone.addEventListener('dragleave', function() {
-                this.style.backgroundColor = '#d4edda';
+                this.classList.remove('highlight');
             });
             
             zone.addEventListener('drop', function(e) {
                 e.preventDefault();
-                this.style.backgroundColor = '#d4edda';
-                const data = e.dataTransfer.getData('text/plain');
-                this.textContent = data;
-                this.setAttribute('data-value', data);
+                this.classList.remove('highlight');
+                
+                const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+                this.textContent = data.text;
+                this.setAttribute('data-type', data.type);
+                this.setAttribute('data-field', data.field);
             });
         });
         
-        // Расчет вероятности
-        document.getElementById('calculateBtn').addEventListener('click', function() {
-            if (loadedData.length === 0) {
-                document.getElementById('result').innerHTML = `
-                    <h3>Результат:</h3>
-                    <p style="color: red;">Пожалуйста, сначала загрузите данные.</p>
-                `;
-                return;
-            }
+        // Добавление новой строки в таблицу с следующей датой
+        function addTableRow() {
+            const tbody = document.querySelector('#dataTable tbody');
+            const rows = tbody.querySelectorAll('tr');
+            const lastDate = rows.length > 0 ? rows[rows.length-1].cells[0].textContent : '2025.04.27';
             
-            const eventElement = document.getElementById('eventDrop');
-            const condition1Element = document.getElementById('condition1Drop');
-            const condition2Element = document.getElementById('condition2Drop');
+            // Увеличиваем дату на 1 день
+            const dateParts = lastDate.split('.');
+            const nextDate = new Date(dateParts[2], dateParts[1]-1, dateParts[0]);
+            nextDate.setDate(nextDate.getDate() + 1);
             
-            const event = eventElement.getAttribute('data-value');
-            const condition1 = condition1Element.getAttribute('data-value');
-            const condition2 = condition2Element.getAttribute('data-value');
+            const formattedDate = `${String(nextDate.getDate()).padStart(2, '0')}.${String(nextDate.getMonth()+1).padStart(2, '0')}.${nextDate.getFullYear()}`;
             
-            if (!event || !condition1) {
-                document.getElementById('result').innerHTML = `
-                    <h3>Результат:</h3>
-                    <p style="color: red;">Пожалуйста, укажите событие и хотя бы одно условие.</p>
-                `;
-                return;
-            }
-            
-            // Преобразуем текстовые условия в фильтры
-            const eventFilter = getFilter(event);
-            const condition1Filter = getFilter(condition1);
-            const condition2Filter = condition2 ? getFilter(condition2) : null;
-            
-            // Рассчитываем вероятности
-            let conditionData = loadedData.filter(condition1Filter);
-            if (condition2Filter) {
-                conditionData = conditionData.filter(condition2Filter);
-            }
-            
-            const totalWithConditions = conditionData.length;
-            const totalWithEventAndConditions = conditionData.filter(eventFilter).length;
-            
-            if (totalWithConditions === 0) {
-                document.getElementById('result').innerHTML = `
-                    <h3>Результат:</h3>
-                    <p style="color: red;">Нет данных, удовлетворяющих условиям.</p>
-                `;
-                return;
-            }
-            
-            const probability = (totalWithEventAndConditions / totalWithConditions * 100).toFixed(2);
-            
-            // Формируем формулу для отображения
-            let formula = `P(${event} | ${condition1}`;
-            if (condition2) {
-                formula += ` и ${condition2}`;
-            }
-            formula += `) = ${totalWithEventAndConditions} / ${totalWithConditions} = ${probability}%`;
-            
-            document.getElementById('result').innerHTML = `
-                <h3>Результат:</h3>
-                <p>Вероятность: <strong>${probability}%</strong></p>
-                <div class="formula">${formula}</div>
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${formattedDate}</td>
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
             `;
-        });
+            
+            tbody.appendChild(newRow);
+        }
         
-        function getFilter(text) {
-            switch(text) {
-                case 'Хорошее настроение': return item => item.mood === 'Да';
-                case 'Плохое настроение': return item => item.mood === 'Нет';
-                case 'Успех в учебе': return item => item.success === 'Да';
-                case 'Неуспех в учебе': return item => item.success === 'Нет';
-                case 'Сдалась': return item => item.gaveUp === 'Да';
-                case 'Не сдалась': return item => item.gaveUp === 'Нет';
-                default: return () => true;
+        // Функции расчета
+        function getData() {
+            const table = document.getElementById('dataTable');
+            const headers = Array.from(table.querySelectorAll('thead th')).map(th => ({
+                text: th.textContent,
+                field: th.getAttribute('data-field')
+            }));
+            const rows = table.querySelectorAll('tbody tr');
+            
+            return Array.from(rows).map(row => {
+                const cells = row.querySelectorAll('td');
+                return {
+                    date: cells[0].textContent,
+                    mood: cells[1].textContent,
+                    success: cells[2].textContent,
+                    gaveUp: cells[3].textContent
+                };
+            });
+        }
+        
+        function createFilter(field, value) {
+            return item => item[field] === value;
+        }
+        
+        function calculateSimpleProbability() {
+            const eventZone = document.getElementById('simpleEvent');
+            const eventText = eventZone.textContent;
+            const eventType = eventZone.getAttribute('data-type');
+            const eventField = eventZone.getAttribute('data-field');
+            
+            if (!eventText || eventText === " ") {
+                showResult("simpleResult", "Пожалуйста, выберите событие для расчета", true);
+                return;
             }
+            
+            const data = getData();
+            const value = eventType === 'positive' ? 'Да' : 'Нет';
+            const filter = createFilter(eventField, value);
+            
+            const total = data.length;
+            const eventCount = data.filter(filter).length;
+            const probability = (eventCount / total * 100).toFixed(2);
+            
+            const formula = `P(${eventText}) = Количество(${eventText}) / Общее количество = ${eventCount} / ${total} = ${probability}%`;
+            showResult("simpleResult", `Вероятность ${eventText}: ${probability}%`, false, formula);
+        }
+        
+        function calculateConditionalProbability() {
+            const eventZone = document.getElementById('condEvent');
+            const conditionZone = document.getElementById('condCondition');
+            
+            const eventText = eventZone.textContent;
+            const eventType = eventZone.getAttribute('data-type');
+            const eventField = eventZone.getAttribute('data-field');
+            
+            const conditionText = conditionZone.textContent;
+            const conditionType = conditionZone.getAttribute('data-type');
+            const conditionField = conditionZone.getAttribute('data-field');
+            
+            if (!eventText || eventText === " " || !conditionText || conditionText === " ") {
+                showResult("condResult", "Пожалуйста, выберите и событие, и условие", true);
+                return;
+            }
+            
+            const data = getData();
+            const eventValue = eventType === 'positive' ? 'Да' : 'Нет';
+            const conditionValue = conditionType === 'positive' ? 'Да' : 'Нет';
+            
+            const conditionFilter = createFilter(conditionField, conditionValue);
+            const conditionData = data.filter(conditionFilter);
+            const totalWithCondition = conditionData.length;
+            
+            if (totalWithCondition === 0) {
+                showResult("condResult", "Нет данных, удовлетворяющих условию", true);
+                return;
+            }
+            
+            const eventFilter = createFilter(eventField, eventValue);
+            const eventWithConditionCount = conditionData.filter(eventFilter).length;
+            const probability = (eventWithConditionCount / totalWithCondition * 100).toFixed(2);
+            
+            const formula = `P(${eventText}|${conditionText}) = P(${eventText}∩${conditionText}) / P(${conditionText}) = ${eventWithConditionCount}/${totalWithCondition} = ${probability}%`;
+            showResult("condResult", `Вероятность ${eventText} при условии ${conditionText}: ${probability}%`, false, formula);
+        }
+        
+        function calculateJointProbability() {
+            const event1Zone = document.getElementById('jointEvent1');
+            const event2Zone = document.getElementById('jointEvent2');
+            
+            const event1Text = event1Zone.textContent;
+            const event1Type = event1Zone.getAttribute('data-type');
+            const event1Field = event1Zone.getAttribute('data-field');
+            
+            const event2Text = event2Zone.textContent;
+            const event2Type = event2Zone.getAttribute('data-type');
+            const event2Field = event2Zone.getAttribute('data-field');
+            
+            if (!event1Text || event1Text === " " || !event2Text || event2Text === " ") {
+                showResult("jointResult", "Пожалуйста, выберите оба события", true);
+                return;
+            }
+            
+            const data = getData();
+            const event1Value = event1Type === 'positive' ? 'Да' : 'Нет';
+            const event2Value = event2Type === 'positive' ? 'Да' : 'Нет';
+            
+            const event1Filter = createFilter(event1Field, event1Value);
+            const event2Filter = createFilter(event2Field, event2Value);
+            
+            const total = data.length;
+            const bothEventsCount = data.filter(item => event1Filter(item) && event2Filter(item)).length;
+            const probability = (bothEventsCount / total * 100).toFixed(2);
+            
+            const formula = `P(${event1Text}∩${event2Text}) = Количество(${event1Text} и ${event2Text}) / Общее количество = ${bothEventsCount} / ${total} = ${probability}%`;
+            showResult("jointResult", `Вероятность ${event1Text} и ${event2Text}: ${probability}%`, false, formula);
+        }
+        
+        function showResult(elementId, message, isError, formula = null) {
+            const resultDiv = document.getElementById(elementId);
+            
+            if (isError) {
+                resultDiv.innerHTML = `
+                    <p style="color: red;">${message}</p>
+                `;
+                return;
+            }
+            
+            let formulaHtml = '';
+            if (formula) {
+                formulaHtml = `
+                    <div class="formula">${formula}</div>
+                `;
+            }
+            
+            resultDiv.innerHTML = `
+                <p>${message}</p>
+                ${formulaHtml}
+            `;
         }
     </script>
 </body>
