@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор вероятностей</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .data-input {
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .drag-item {
+            padding: 8px 12px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            cursor: move;
+            user-select: none;
+        }
+        .query-builder {
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            min-height: 60px;
+        }
+        .drop-zone {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #d4edda;
+            border-radius: 4px;
+            margin: 0 5px;
+            min-width: 30px;
+            min-height: 20px;
+            vertical-align: middle;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e7f3fe;
+            border-left: 5px solid #2196F3;
+            border-radius: 4px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .formula {
+            font-family: monospace;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Калькулятор вероятностей</h1>
+        
+        <div class="data-input">
+            <h3>Введите данные (построчно в формате: Дата, Настроение, Успех, Сдалась):</h3>
+            <textarea id="dataInput">2025.04.07,Да,Да,Нет
+2025.04.08,Да,Да,Нет
+2025.04.09,Да,Да,Нет
+2025.04.10,Нет,Нет,Да
+2025.04.11,Нет,Нет,Да
+2025.04.12,Нет,Нет,Нет
+2025.04.13,Да,Да,Нет
+2025.04.14,Нет,Да,Нет
+2025.04.15,Нет,Нет,Нет
+2025.04.16,Нет,Да,Нет</textarea>
+            <button id="loadData">Загрузить данные</button>
+        </div>
+        
+        <div id="dataTable"></div>
+        
+        <div class="controls">
+            <h3>Доступные условия:</h3>
+            <div class="drag-item" draggable="true" data-type="event">Хорошее настроение</div>
+            <div class="drag-item" draggable="true" data-type="event">Плохое настроение</div>
+            <div class="drag-item" draggable="true" data-type="event">Успех в учебе</div>
+            <div class="drag-item" draggable="true" data-type="event">Неуспех в учебе</div>
+            <div class="drag-item" draggable="true" data-type="event">Сдалась</div>
+            <div class="drag-item" draggable="true" data-type="event">Не сдалась</div>
+        </div>
+        
+        <div class="query-builder">
+            <h3>Построитель запроса:</h3>
+            <p>Какая вероятность 
+                <span class="drop-zone" id="eventDrop">[перетащите событие сюда]</span> 
+                если 
+                <span class="drop-zone" id="condition1Drop">[перетащите условие сюда]</span>
+                и
+                <span class="drop-zone" id="condition2Drop">[перетащите условие сюда]</span>?
+            </p>
+            <button id="calculateBtn">Рассчитать</button>
+        </div>
+        
+        <div class="result" id="result">
+            <h3>Результат:</h3>
+            <p>Загрузите данные и постройте запрос для расчета.</p>
+        </div>
+    </div>
+
+    <script>
+        let loadedData = [];
+        
+        document.getElementById('loadData').addEventListener('click', function() {
+            const inputText = document.getElementById('dataInput').value.trim();
+            const lines = inputText.split('\n');
+            
+            loadedData = [];
+            for (const line of lines) {
+                const parts = line.split(',');
+                if (parts.length === 4) {
+                    loadedData.push({
+                        date: parts[0].trim(),
+                        mood: parts[1].trim(),
+                        success: parts[2].trim(),
+                        gaveUp: parts[3].trim()
+                    });
+                }
+            }
+            
+            // Отображаем таблицу с данными
+            renderDataTable();
+            
+            document.getElementById('result').innerHTML = `
+                <h3>Результат:</h3>
+                <p>Данные успешно загружены (${loadedData.length} записей). Постройте запрос для расчета.</p>
+            `;
+        });
+        
+        function renderDataTable() {
+            const tableHtml = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Дата</th>
+                            <th>Настроение</th>
+                            <th>Успех</th>
+                            <th>Сдалась</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${loadedData.map(item => `
+                            <tr>
+                                <td>${item.date}</td>
+                                <td>${item.mood}</td>
+                                <td>${item.success}</td>
+                                <td>${item.gaveUp}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            document.getElementById('dataTable').innerHTML = tableHtml;
+        }
+        
+        // Drag and Drop функционал
+        const dragItems = document.querySelectorAll('.drag-item');
+        const dropZones = document.querySelectorAll('.drop-zone');
+        
+        dragItems.forEach(item => {
+            item.addEventListener('dragstart', function(e) {
+                e.dataTransfer.setData('text/plain', this.textContent);
+            });
+        });
+        
+        dropZones.forEach(zone => {
+            zone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.style.backgroundColor = '#c3e6cb';
+            });
+            
+            zone.addEventListener('dragleave', function() {
+                this.style.backgroundColor = '#d4edda';
+            });
+            
+            zone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.style.backgroundColor = '#d4edda';
+                const data = e.dataTransfer.getData('text/plain');
+                this.textContent = data;
+                this.setAttribute('data-value', data);
+            });
+        });
+        
+        // Расчет вероятности
+        document.getElementById('calculateBtn').addEventListener('click', function() {
+            if (loadedData.length === 0) {
+                document.getElementById('result').innerHTML = `
+                    <h3>Результат:</h3>
+                    <p style="color: red;">Пожалуйста, сначала загрузите данные.</p>
+                `;
+                return;
+            }
+            
+            const eventElement = document.getElementById('eventDrop');
+            const condition1Element = document.getElementById('condition1Drop');
+            const condition2Element = document.getElementById('condition2Drop');
+            
+            const event = eventElement.getAttribute('data-value');
+            const condition1 = condition1Element.getAttribute('data-value');
+            const condition2 = condition2Element.getAttribute('data-value');
+            
+            if (!event || !condition1) {
+                document.getElementById('result').innerHTML = `
+                    <h3>Результат:</h3>
+                    <p style="color: red;">Пожалуйста, укажите событие и хотя бы одно условие.</p>
+                `;
+                return;
+            }
+            
+            // Преобразуем текстовые условия в фильтры
+            const eventFilter = getFilter(event);
+            const condition1Filter = getFilter(condition1);
+            const condition2Filter = condition2 ? getFilter(condition2) : null;
+            
+            // Рассчитываем вероятности
+            let conditionData = loadedData.filter(condition1Filter);
+            if (condition2Filter) {
+                conditionData = conditionData.filter(condition2Filter);
+            }
+            
+            const totalWithConditions = conditionData.length;
+            const totalWithEventAndConditions = conditionData.filter(eventFilter).length;
+            
+            if (totalWithConditions === 0) {
+                document.getElementById('result').innerHTML = `
+                    <h3>Результат:</h3>
+                    <p style="color: red;">Нет данных, удовлетворяющих условиям.</p>
+                `;
+                return;
+            }
+            
+            const probability = (totalWithEventAndConditions / totalWithConditions * 100).toFixed(2);
+            
+            // Формируем формулу для отображения
+            let formula = `P(${event} | ${condition1}`;
+            if (condition2) {
+                formula += ` и ${condition2}`;
+            }
+            formula += `) = ${totalWithEventAndConditions} / ${totalWithConditions} = ${probability}%`;
+            
+            document.getElementById('result').innerHTML = `
+                <h3>Результат:</h3>
+                <p>Вероятность: <strong>${probability}%</strong></p>
+                <div class="formula">${formula}</div>
+            `;
+        });
+        
+        function getFilter(text) {
+            switch(text) {
+                case 'Хорошее настроение': return item => item.mood === 'Да';
+                case 'Плохое настроение': return item => item.mood === 'Нет';
+                case 'Успех в учебе': return item => item.success === 'Да';
+                case 'Неуспех в учебе': return item => item.success === 'Нет';
+                case 'Сдалась': return item => item.gaveUp === 'Да';
+                case 'Не сдалась': return item => item.gaveUp === 'Нет';
+                default: return () => true;
+            }
+        }
+    </script>
+</body>
+</html>
