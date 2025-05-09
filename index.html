@@ -105,6 +105,7 @@
             padding: 15px;
             border: 1px solid #eee;
             border-radius: 6px;
+            position: relative;
         }
         
         .drop-zone {
@@ -177,11 +178,11 @@
         }
         
         .add-row {
-    margin-top: 15px;
-    background-color: #6f946f;
-    position: relative; /* Убедимся, что кнопка не прилипает к таблице */
-    z-index: 1; /* Поднимаем над таблицей */
-}
+            margin-top: 15px;
+            background-color: #6f946f;
+            position: relative;
+            z-index: 1;
+        }
         
         .add-row:hover {
             background-color: #92c692;
@@ -192,7 +193,7 @@
         }
         
         .add-cat-columns:hover {
-            background-color: #754a4a;
+            background-color: #d3c5c5;
         }
         
         [contenteditable="true"]:focus {
@@ -207,38 +208,84 @@
             margin-bottom: 15px;
         }
         .table-container {
-    margin-top: 15px;
-    max-height: calc(100vh - 200px); /* Ограничиваем высоту */
-    overflow-y: auto; /* Включаем вертикальную прокрутку */
-    border: 1px solid #ddd; /* Добавляем границу для визуального отделения */
-    border-radius: 4px; /* Скругляем углы */
-}
+            margin-top: 15px;
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
 
-#dataTable thead th {
-    position: sticky;
-    top: 0;
-    background-color: #f2f2f2;
-    z-index: 10;
-}
+        #dataTable thead th {
+            position: sticky;
+            top: 0;
+            background-color: #f2f2f2;
+            z-index: 10;
+        }
 
-/* Положительные кошачьи переменные */
-.variable.cat[data-type="positive"].visible {
-    background-color: #fff58a; /* Светло-розовый */
-    border: 1px solid #ff69b4; /* Темно-розовая граница */
-}
+        /* Положительные кошачьи переменные */
+        .variable.cat[data-type="positive"].visible {
+            background-color: #fff58a;
+            border: 1px solid #ff69b4;
+        }
 
-/* Отрицательные кошачьи переменные */
-.variable.cat[data-type="negative"].visible {
-    background-color: #585643; /* Светло-голубой */
-    border: 1px solid #1e90ff; /* Синяя граница */
-    color: #ddd;
-}
+        /* Отрицательные кошачьи переменные */
+        .variable.cat[data-type="negative"].visible {
+            background-color: #e2b3ba;
+            border: 1px solid 2c;
+            color: #383333;
+        }
 
-/* Скрытые кошачьи переменные */
-.variable.cat:not(.visible) {
-    display: none;
-}
+        /* Скрытые кошачьи переменные */
+        .variable.cat:not(.visible) {
+            display: none;
+        }
 
+        /* Новые стили для дополнительных параметров */
+        .add-param-btn {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            padding: 4px 8px;
+            background-color: #6d8b6d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .add-param-btn:hover {
+            background-color: #5a7a5a;
+        }
+        
+        .probability-expression {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+        }
+        
+        .param-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .param-group .drop-zone {
+            margin-right: 5px;
+        }
+        
+        .remove-param {
+            margin-left: 5px;
+            color: red;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .operator {
+            margin: 0 5px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -257,9 +304,9 @@
                     <div class="variable" draggable="true" data-type="negative" data-field="gaveUp">Не сдалась</div>
                     
                     <div class="variable cat" draggable="true" data-type="positive" data-field="moodAfterCat">Настроение после кошки</div>
-<div class="variable cat" draggable="true" data-type="negative" data-field="moodAfterCat">Настроение не изменилось</div>
-<div class="variable cat" draggable="true" data-type="positive" data-field="newColumn">Новый параметр</div>
-<div class="variable cat" draggable="true" data-type="negative" data-field="newColumn">Не новый параметр</div>
+                    <div class="variable cat" draggable="true" data-type="negative" data-field="moodAfterCat">Настроение не изменилось</div>
+                    <div class="variable cat" draggable="true" data-type="positive" data-field="newColumn">Новый параметр</div>
+                    <div class="variable cat" draggable="true" data-type="negative" data-field="newColumn">Не новый параметр</div>
                 </div>
             </div>
                 
@@ -267,8 +314,13 @@
                 <div class="panel">
                     <div class="query-templates">
                         <div class="query-template">
+                            <button class="add-param-btn" onclick="addSimpleParam()">+ Параметр</button>
                             <h3>Простая вероятность</h3>
-                            <p>P(<span class="drop-zone" id="simpleEvent"></span>)</p>
+                            <div class="probability-expression" id="simpleExpression">
+                                <div class="param-group">
+                                    P(<span class="drop-zone" id="simpleEvent"></span>)
+                                </div>
+                            </div>
                             <button onclick="calculateSimpleProbability()">Рассчитать</button>
                             <div class="result" id="simpleResult">
                                 <p>Выберите событие для расчета.</p>
@@ -276,8 +328,13 @@
                         </div>
                         
                         <div class="query-template">
+                            <button class="add-param-btn" onclick="addCondParam()">+ Параметр</button>
                             <h3>Условная вероятность</h3>
-                            <p>P(<span class="drop-zone" id="condEvent"></span> | <span class="drop-zone" id="condCondition"></span>)</p>
+                            <div class="probability-expression" id="condExpression">
+                                <div class="param-group">
+                                    P(<span class="drop-zone" id="condEvent"></span> | <span class="drop-zone" id="condCondition"></span>)
+                                </div>
+                            </div>
                             <button onclick="calculateConditionalProbability()">Рассчитать</button>
                             <div class="result" id="condResult">
                                 <p>Выберите событие и условие.</p>
@@ -285,23 +342,32 @@
                         </div>
                                               
                         <div class="query-template">
-                            <h3>Совместная вероятность</h3>
-                            <p>P(<span class="drop-zone" id="jointEvent1"></span> ∩ <span class="drop-zone" id="jointEvent2"></span>)</p>
-                            <button onclick="calculateJointProbability()">Рассчитать</button>
-                            <div class="result" id="jointResult">
-                                <p>Выберите два события для расчета совместной вероятности.</p>
+                            <button class="add-param-btn" onclick="addSeqParam()">+ Параметр</button>
+                            <h3>Зависимая (последовательная) вероятность</h3>
+                            <div class="probability-expression" id="seqExpression">
+                                <div class="param-group">
+                                    P(<span class="drop-zone" id="seqEvent1"></span> → <span class="drop-zone" id="seqEvent2"></span>)
+                                </div>
+                            </div>
+                            <button onclick="calculateSequenceProbability()">Рассчитать</button>
+                            <div class="result" id="seqResult">
+                                <p>произойдут ли оба события одновременно?</p>
                             </div>
                         </div>
 
                         <div class="query-template">
-                            <h3>Вероятность последовательности(зависимая)</h3>
-                            <p>P(<span class="drop-zone" id="seqEvent1"></span> → <span class="drop-zone" id="seqEvent2"></span>)</p>
-                            <button onclick="calculateSequenceProbability()">Рассчитать</button>
-                            <div class="result" id="seqResult">
-                                <p>Выберите два события для расчета вероятности последовательности.</p>
+                            <button class="add-param-btn" onclick="addUnionParam()">+ Параметр</button>
+                            <h3>Совместная вероятность</h3>
+                            <div class="probability-expression" id="unionExpression">
+                                <div class="param-group">
+                                    P(<span class="drop-zone" id="unionEvent1"></span> ∪ <span class="drop-zone" id="unionEvent2"></span>)
+                                </div>
+                            </div>
+                            <button onclick="calculateUnionProbability()">Рассчитать</button>
+                            <div class="result" id="unionResult">
+                                <p>Вероятность того, что произойдет то или то (или все).</p>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -319,9 +385,9 @@
                             <th contenteditable="true" data-field="date">Дата</th>
                             <th contenteditable="true" data-field="mood">Хорошее настроение</th>
                             <th contenteditable="true" data-field="success">Успех в учебе</th>
-                            <th contenteditable="true" data-field="gaveUp">Сдалась?</th>
-                            <th class="cat-column hidden" contenteditable="true" data-field="moodAfterCat">Настроение после прихода Мурки</th>
-                            <th class="cat-column hidden" contenteditable="true" data-field="newColumn">Новый параметр</th>
+                            <th contenteditable="true" data-field="gaveUp">Сдалась</th>
+                            <th class="cat-column hidden" contenteditable="true" data-field="moodAfterCat">Поженюсь с Муркой</th>
+                            <th class="cat-column hidden" contenteditable="true" data-field="newColumn">Попробую Муркин кефир</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody">
@@ -332,6 +398,7 @@
             <button class="add-row" onclick="addTableRow()">+ Добавить строку</button>
         </div>
     </div>
+
     <script>
         // Инициализация данных при загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
@@ -384,6 +451,9 @@
                     tableBody.appendChild(newRow);
                 });
             }
+            
+            // Добавляем обработчики событий для всех ячеек
+            setupTableEditableCells();
         }
         
         // Сохранение данных таблицы в localStorage
@@ -461,6 +531,9 @@
                 tableBody.appendChild(newRow);
             });
             
+            // Добавляем обработчики событий для новых ячеек
+            setupTableEditableCells();
+            
             saveTableData();
         }
         
@@ -475,6 +548,7 @@
                     updateVariableNames(field, savedName);
                 }
                 
+                // Добавляем обработчик для сохранения при изменении
                 header.addEventListener('blur', function() {
                     const newName = this.textContent;
                     localStorage.setItem(`column_${field}`, newName);
@@ -506,47 +580,59 @@
                 td.addEventListener('blur', function() {
                     saveTableData();
                 });
+                
+                // Также сохраняем при нажатии Enter
+                td.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        this.blur();
+                    }
+                });
             });
         }
         
         // Переключение дополнительных столбцов и переменных
         function toggleCatColumns() {
-    const catColumns = document.querySelectorAll('.cat-column');
-    const catVariables = document.querySelectorAll('.variable.cat');
-    const button = document.querySelector('.add-cat-columns');
-    
-    // Определяем текущее состояние
-    const showingCats = catColumns[0].classList.contains('hidden');
-    
-    // Переключаем столбцы
-    catColumns.forEach(col => {
-        col.classList.toggle('hidden');
-    });
-    
-    // Переключаем переменные
-    catVariables.forEach(variable => {
-        if (showingCats) {
-            variable.classList.add('visible');
-        } else {
-            variable.classList.remove('visible');
+            const catColumns = document.querySelectorAll('.cat-column');
+            const catVariables = document.querySelectorAll('.variable.cat');
+            const button = document.querySelector('.add-cat-columns');
+            
+            // Определяем текущее состояние
+            const showingCats = catColumns[0].classList.contains('hidden');
+            
+            // Переключаем столбцы
+            catColumns.forEach(col => {
+                col.classList.toggle('hidden');
+            });
+            
+            // Переключаем переменные
+            catVariables.forEach(variable => {
+                if (showingCats) {
+                    variable.classList.add('visible');
+                } else {
+                    variable.classList.remove('visible');
+                }
+            });
+            
+            // Меняем кнопку
+            if (showingCats) {
+                button.textContent = 'Убрать кошачьи столбцы';
+                button.style.backgroundColor = '#ff69b4';
+            } else {
+                button.textContent = 'Добавить кошачьи столбцы';
+                button.style.backgroundColor = '#9c27b0';
+            }
+            
+            // Перезагружаем данные таблицы, чтобы обновить отображение
+            loadTableData();
         }
-    });
-    
-    // Меняем кнопку
-    if (showingCats) {
-        button.textContent = 'Убрать кошачьи столбцы';
-        button.style.backgroundColor = '#ff69b4';
-    } else {
-        button.textContent = 'Добавить кошачьи столбцы';
-        button.style.backgroundColor = '#9c27b0';
-    }
-    
-    saveTableData();
-}
 
-// Скрываем кошачьи элементы при загрузке
-document.querySelectorAll('.cat-column').forEach(col => col.classList.add('hidden'));
-document.querySelectorAll('.variable.cat').forEach(v => v.classList.remove('visible'));
+        // Скрываем кошачьи элементы при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.cat-column').forEach(col => col.classList.add('hidden'));
+            document.querySelectorAll('.variable.cat').forEach(v => v.classList.remove('visible'));
+        });
+        
         // Настройка drag and drop
         function setupDragAndDrop() {
             const variables = document.querySelectorAll('.variable');
@@ -614,13 +700,97 @@ document.querySelectorAll('.variable.cat').forEach(v => v.classList.remove('visi
             tbody.appendChild(newRow);
             
             // Настройка обработчиков событий для новых ячеек
-            newRow.querySelectorAll('td').forEach(td => {
-                td.addEventListener('blur', function() {
-                    saveTableData();
-                });
-            });
+            setupTableEditableCells();
             
             saveTableData();
+        }
+        
+        // Функции для работы с дополнительными параметрами
+        function addSimpleParam() {
+            const expressionDiv = document.getElementById('simpleExpression');
+            const newParamId = 'simpleParam_' + Date.now();
+            
+            const paramGroup = document.createElement('div');
+            paramGroup.className = 'param-group';
+            paramGroup.innerHTML = `
+                <span class="operator">∩</span> P(<span class="drop-zone" id="${newParamId}"></span>)
+                <span class="remove-param" onclick="removeParam(this)">×</span>
+            `;
+            
+            expressionDiv.appendChild(paramGroup);
+            setupDragAndDropForNewZone(newParamId);
+        }
+        
+        function addCondParam() {
+            const expressionDiv = document.getElementById('condExpression');
+            const newParamId = 'condParam_' + Date.now();
+            
+            const paramGroup = document.createElement('div');
+            paramGroup.className = 'param-group';
+            paramGroup.innerHTML = `
+                <span class="operator">∩</span> P(<span class="drop-zone" id="${newParamId}"></span>)
+                <span class="remove-param" onclick="removeParam(this)">×</span>
+            `;
+            
+            expressionDiv.appendChild(paramGroup);
+            setupDragAndDropForNewZone(newParamId);
+        }
+        
+        function addSeqParam() {
+            const expressionDiv = document.getElementById('seqExpression');
+            const newParamId = 'seqParam_' + Date.now();
+            
+            const paramGroup = document.createElement('div');
+            paramGroup.className = 'param-group';
+            paramGroup.innerHTML = `
+                <span class="operator">→</span> P(<span class="drop-zone" id="${newParamId}"></span>)
+                <span class="remove-param" onclick="removeParam(this)">×</span>
+            `;
+            
+            expressionDiv.appendChild(paramGroup);
+            setupDragAndDropForNewZone(newParamId);
+        }
+        
+        function addUnionParam() {
+            const expressionDiv = document.getElementById('unionExpression');
+            const newParamId = 'unionParam_' + Date.now();
+            
+            const paramGroup = document.createElement('div');
+            paramGroup.className = 'param-group';
+            paramGroup.innerHTML = `
+                <span class="operator">∪</span> P(<span class="drop-zone" id="${newParamId}"></span>)
+                <span class="remove-param" onclick="removeParam(this)">×</span>
+            `;
+            
+            expressionDiv.appendChild(paramGroup);
+            setupDragAndDropForNewZone(newParamId);
+        }
+        
+        function removeParam(element) {
+            element.parentElement.remove();
+        }
+        
+        function setupDragAndDropForNewZone(zoneId) {
+            const zone = document.getElementById(zoneId);
+            
+            zone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('highlight');
+            });
+            
+            zone.addEventListener('dragleave', function() {
+                this.classList.remove('highlight');
+            });
+            
+            zone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('highlight');
+                
+                const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+                this.textContent = data.text;
+                this.setAttribute('data-type', data.type);
+                this.setAttribute('data-field', data.field);
+            });
         }
         
         // Функции расчета вероятностей
@@ -649,31 +819,71 @@ document.querySelectorAll('.variable.cat').forEach(v => v.classList.remove('visi
         }
         
         function calculateSimpleProbability() {
-            const eventZone = document.getElementById('simpleEvent');
-            const eventText = eventZone.textContent;
-            const eventType = eventZone.getAttribute('data-type');
-            const eventField = eventZone.getAttribute('data-field');
+            const expressionDiv = document.getElementById('simpleExpression');
+            const paramGroups = expressionDiv.querySelectorAll('.param-group');
             
-            if (!eventText || eventText === " ") {
+            if (paramGroups.length === 0) {
                 showResult("simpleResult", "Пожалуйста, выберите событие для расчета", true);
                 return;
             }
             
             const data = getData();
-            const value = eventType === 'positive' ? 'Да' : 'Нет';
-            const filter = createFilter(eventField, value);
-            
             const total = data.length;
-            const eventCount = data.filter(filter).length;
-            const probability = (eventCount / total * 100).toFixed(2);
             
-            const formula = `P(${eventText}) = Количество(${eventText}) / Общее количество = ${eventCount} / ${total} = ${probability}%`;
-            showResult("simpleResult", `Вероятность ${eventText}: ${probability}%`, false, formula);
+            if (total === 0) {
+                showResult("simpleResult", "Нет данных для анализа", true);
+                return;
+            }
+            
+            let probability = 1;
+            let formulaParts = [];
+            let descriptionParts = [];
+            
+            paramGroups.forEach((group, index) => {
+                const zone = group.querySelector('.drop-zone');
+                const eventText = zone.textContent;
+                const eventType = zone.getAttribute('data-type');
+                const eventField = zone.getAttribute('data-field');
+                
+                if (!eventText || eventText === " ") {
+                    showResult("simpleResult", `Пожалуйста, выберите событие в параметре ${index + 1}`, true);
+                    return;
+                }
+                
+                const value = eventType === 'positive' ? 'Да' : 'Нет';
+                const filter = createFilter(eventField, value);
+                
+                const eventCount = data.filter(filter).length;
+                const eventProb = eventCount / total;
+                
+                probability *= eventProb;
+                formulaParts.push(`(${eventCount}/${total})`);
+                descriptionParts.push(eventText);
+            });
+            
+            const finalProbability = (probability * 100).toFixed(2);
+            const formula = `P(${descriptionParts.join(' ∩ ')}) = ${formulaParts.join(' × ')} = ${finalProbability}%`;
+            
+            showResult(
+                "simpleResult", 
+                `Совместная вероятность ${descriptionParts.join(' и ')}: ${finalProbability}%`, 
+                false, 
+                formula
+            );
         }
         
         function calculateConditionalProbability() {
-            const eventZone = document.getElementById('condEvent');
-            const conditionZone = document.getElementById('condCondition');
+            const expressionDiv = document.getElementById('condExpression');
+            const mainGroup = expressionDiv.querySelector('.param-group:first-child');
+            const additionalGroups = Array.from(expressionDiv.querySelectorAll('.param-group')).slice(1);
+            
+            if (!mainGroup) {
+                showResult("condResult", "Пожалуйста, выберите событие и условие", true);
+                return;
+            }
+            
+            const eventZone = mainGroup.querySelector('#condEvent');
+            const conditionZone = mainGroup.querySelector('#condCondition');
             
             const eventText = eventZone.textContent;
             const eventType = eventZone.getAttribute('data-type');
@@ -692,151 +902,246 @@ document.querySelectorAll('.variable.cat').forEach(v => v.classList.remove('visi
             const eventValue = eventType === 'positive' ? 'Да' : 'Нет';
             const conditionValue = conditionType === 'positive' ? 'Да' : 'Нет';
             
+            // Основное условие
             const conditionFilter = createFilter(conditionField, conditionValue);
-            const conditionData = data.filter(conditionFilter);
-            const totalWithCondition = conditionData.length;
+            let filteredData = data.filter(conditionFilter);
             
-            if (totalWithCondition === 0) {
+            // Дополнительные условия
+            additionalGroups.forEach(group => {
+                const zone = group.querySelector('.drop-zone');
+                const paramText = zone.textContent;
+                const paramType = zone.getAttribute('data-type');
+                const paramField = zone.getAttribute('data-field');
+                
+                if (!paramText || paramText === " ") {
+                    showResult("condResult", "Пожалуйста, заполните все дополнительные параметры", true);
+                    return;
+                }
+                
+                const paramValue = paramType === 'positive' ? 'Да' : 'Нет';
+                const paramFilter = createFilter(paramField, paramValue);
+                filteredData = filteredData.filter(paramFilter);
+            });
+            
+            const conditionCount = filteredData.length;
+            
+            if (conditionCount === 0) {
                 showResult("condResult", "Нет данных, удовлетворяющих условию", true);
                 return;
             }
             
             const eventFilter = createFilter(eventField, eventValue);
-            const eventWithConditionCount = conditionData.filter(eventFilter).length;
-            const probability = (eventWithConditionCount / totalWithCondition * 100).toFixed(2);
+            const eventAndConditionCount = filteredData.filter(eventFilter).length;
             
-            const formula = `P(${eventText}|${conditionText}) = P(${eventText}∩${conditionText}) / P(${conditionText}) = ${eventWithConditionCount}/${totalWithCondition} = ${probability}%`;
-            showResult("condResult", `Вероятность ${eventText} при условии ${conditionText}: ${probability}%`, false, formula);
+            const probability = (eventAndConditionCount / conditionCount * 100).toFixed(2);
+            
+            let formula = `P(${eventText} | ${conditionText}`;
+            if (additionalGroups.length > 0) {
+                formula += ` ∩ ${Array.from(additionalGroups).map(g => g.querySelector('.drop-zone').textContent).join(' ∩ ')})`;
+            } else {
+                formula += `)`;
+            }
+            
+            formula += ` = ${eventAndConditionCount}/${conditionCount} = ${probability}%`;
+            
+            let description = `Вероятность ${eventText} при условии ${conditionText}`;
+            if (additionalGroups.length > 0) {
+                description += ` и ${Array.from(additionalGroups).map(g => g.querySelector('.drop-zone').textContent).join(' и ')}`;
+            }
+            
+            showResult(
+                "condResult", 
+                `${description}: ${probability}%`, 
+                false, 
+                formula
+            );
         }
         
+        function calculateSequenceProbability() {
+            const expressionDiv = document.getElementById('seqExpression');
+            const mainGroup = expressionDiv.querySelector('.param-group:first-child');
+            const additionalGroups = Array.from(expressionDiv.querySelectorAll('.param-group')).slice(1);
+            
+            if (!mainGroup) {
+                showResult("seqResult", "Пожалуйста, выберите события для анализа", true);
+                return;
+            }
+            
+            const event1Zone = mainGroup.querySelector('#seqEvent1');
+            const event2Zone = mainGroup.querySelector('#seqEvent2');
+            
+            const event1Text = event1Zone.textContent;
+            const event1Type = event1Zone.getAttribute('data-type');
+            const event1Field = event1Zone.getAttribute('data-field');
+            
+            const event2Text = event2Zone.textContent;
+            const event2Type = event2Zone.getAttribute('data-type');
+            const event2Field = event2Zone.getAttribute('data-field');
+            
+            if (!event1Text || event1Text === " " || !event2Text || event2Text === " ") {
+                showResult("seqResult", "Пожалуйста, выберите оба события", true);
+                return;
+            }
+            
+            const data = getData();
+            const event1Value = event1Type === 'positive' ? 'Да' : 'Нет';
+            const event2Value = event2Type === 'positive' ? 'Да' : 'Нет';
+            
+            // Фильтр для первого события
+            const event1Filter = createFilter(event1Field, event1Value);
+            let filteredData = data.filter(event1Filter);
+            
+            // Дополнительные условия
+            additionalGroups.forEach(group => {
+                const zone = group.querySelector('.drop-zone');
+                const paramText = zone.textContent;
+                const paramType = zone.getAttribute('data-type');
+                const paramField = zone.getAttribute('data-field');
+                
+                if (!paramText || paramText === " ") {
+                    showResult("seqResult", "Пожалуйста, заполните все дополнительные параметры", true);
+                    return;
+                }
+                
+                const paramValue = paramType === 'positive' ? 'Да' : 'Нет';
+                const paramFilter = createFilter(paramField, paramValue);
+                filteredData = filteredData.filter(paramFilter);
+            });
+            
+            const event1Count = filteredData.length;
+            
+            if (event1Count === 0) {
+                showResult("seqResult", "Нет данных, удовлетворяющих первому событию", true);
+                return;
+            }
+            
+            const event2Filter = createFilter(event2Field, event2Value);
+            const bothEventsCount = filteredData.filter(event2Filter).length;
+            
+            const probability = (bothEventsCount / event1Count * 100).toFixed(2);
+            
+            let formula = `P(${event1Text} → ${event2Text}`;
+            if (additionalGroups.length > 0) {
+                formula += ` ∩ ${Array.from(additionalGroups).map(g => g.querySelector('.drop-zone').textContent).join(' ∩ ')})`;
+            } else {
+                formula += `)`;
+            }
+            
+            formula += ` = ${bothEventsCount}/${event1Count} = ${probability}%`;
+            
+            let description = `Вероятность ${event2Text} после ${event1Text}`;
+            if (additionalGroups.length > 0) {
+                description += ` и ${Array.from(additionalGroups).map(g => g.querySelector('.drop-zone').textContent).join(' и ')}`;
+            }
+            
+            showResult(
+                "seqResult", 
+                `${description}: ${probability}%`, 
+                false, 
+                formula
+            );
+        }
         
-        function calculateJointProbability() {
-    const event1Zone = document.getElementById('jointEvent1');
-    const event2Zone = document.getElementById('jointEvent2');
-    
-    const event1Text = event1Zone.textContent;
-    const event1Type = event1Zone.getAttribute('data-type');
-    const event1Field = event1Zone.getAttribute('data-field');
-    
-    const event2Text = event2Zone.textContent;
-    const event2Type = event2Zone.getAttribute('data-type');
-    const event2Field = event2Zone.getAttribute('data-field');
-    
-    if (!event1Text || event1Text === " " || !event2Text || event2Text === " ") {
-        showResult("jointResult", "Пожалуйста, выберите оба события", true);
-        return;
-    }
-    
-
-    
-    const data = getData();
-    const event1Value = event1Type === 'positive' ? 'Да' : 'Нет';
-    const event2Value = event2Type === 'positive' ? 'Да' : 'Нет';
-    
-    const event1Filter = createFilter(event1Field, event1Value);
-    const event2Filter = createFilter(event2Field, event2Value);
-    
-    const total = data.length;
-    const bothEventsCount = data.filter(item => event1Filter(item) && event2Filter(item)).length;
-    const probability = (bothEventsCount / total * 100).toFixed(2);
-    
-    const formula = `P(${event1Text} ∩ ${event2Text}) = Количество(${event1Text} и ${event2Text}) / Общее количество = ${bothEventsCount} / ${total} = ${probability}%`;
-    showResult("jointResult", `Совместная вероятность ${event1Text} и ${event2Text}: ${probability}%`, false, formula);
-}
-
-function calculateSequenceProbability() {
-    const event1Zone = document.getElementById('seqEvent1');
-    const event2Zone = document.getElementById('seqEvent2');
-    
-    // Проверяем, что события выбраны
-    if (!event1Zone.textContent.trim() || !event2Zone.textContent.trim()) {
-        showResult("seqResult", "Пожалуйста, выберите оба события", true);
-        return;
-    }
-    
-    // Получаем параметры событий
-    const event1Text = event1Zone.textContent;
-    const event1Type = event1Zone.getAttribute('data-type');
-    const event1Field = event1Zone.getAttribute('data-field');
-    
-    const event2Text = event2Zone.textContent;
-    const event2Type = event2Zone.getAttribute('data-type');
-    const event2Field = event2Zone.getAttribute('data-field');
-    
-    // Получаем данные из таблицы
-    const data = getData();
-    const total = data.length;
-    
-    // Проверяем, что есть данные для анализа
-    if (total === 0) {
-        showResult("seqResult", "Нет данных для анализа", true);
-        return;
-    }
-    
-    // Определяем значения для фильтрации
-    const event1Value = event1Type === 'positive' ? 'Да' : 'Нет';
-    const event2Value = event2Type === 'positive' ? 'Да' : 'Нет';
-    
-    // Создаем фильтры
-    const event1Filter = createFilter(event1Field, event1Value);
-    const event2Filter = createFilter(event2Field, event2Value);
-    
-    // Считаем P(A) - вероятность первого события
-    const event1Data = data.filter(event1Filter);
-    const event1Count = event1Data.length;
-    
-    if (event1Count === 0) {
-        showResult("seqResult", `Событие "${event1Text}" никогда не встречается`, true);
-        return;
-    }
-    
-    const probA = event1Count / total;
-    
-    // Считаем P(B|A) - вероятность второго события при условии первого
-    const bothEventsData = event1Data.filter(event2Filter);
-    const bothEventsCount = bothEventsData.length;
-    
-    const probBgivenA = bothEventsCount / event1Count;
-    
-    // Итоговая вероятность P(A → B) = P(A) × P(B|A)
-    const probability = (probA * probBgivenA * 100).toFixed(2);
-    
-    // Форматируем формулу для вывода
-    const formula = `
-        P(${event1Text} → ${event2Text}) = P(${event1Text}) × P(${event2Text}|${event1Text}) = 
-        (${event1Count}/${total}) × (${bothEventsCount}/${event1Count}) = ${probability}%
-    `;
-    
-    // Выводим результат
-    showResult(
-        "seqResult", 
-        `Вероятность последовательности ${event1Text} → ${event2Text}: ${probability}%`, 
-        false, 
-        formula
-    );
-}
-
+        function calculateUnionProbability() {
+            const expressionDiv = document.getElementById('unionExpression');
+            const mainGroup = expressionDiv.querySelector('.param-group:first-child');
+            const additionalGroups = Array.from(expressionDiv.querySelectorAll('.param-group')).slice(1);
+            
+            if (!mainGroup) {
+                showResult("unionResult", "Пожалуйста, выберите события для анализа", true);
+                return;
+            }
+            
+            const event1Zone = mainGroup.querySelector('#unionEvent1');
+            const event2Zone = mainGroup.querySelector('#unionEvent2');
+            
+            const event1Text = event1Zone.textContent;
+            const event1Type = event1Zone.getAttribute('data-type');
+            const event1Field = event1Zone.getAttribute('data-field');
+            
+            const event2Text = event2Zone.textContent;
+            const event2Type = event2Zone.getAttribute('data-type');
+            const event2Field = event2Zone.getAttribute('data-field');
+            
+            if (!event1Text || event1Text === " " || !event2Text || event2Text === " ") {
+                showResult("unionResult", "Пожалуйста, выберите оба события", true);
+                return;
+            }
+            
+            const data = getData();
+            const event1Value = event1Type === 'positive' ? 'Да' : 'Нет';
+            const event2Value = event2Type === 'positive' ? 'Да' : 'Нет';
+            
+            // Фильтры для событий
+            const event1Filter = createFilter(event1Field, event1Value);
+            const event2Filter = createFilter(event2Field, event2Value);
+            
+            let filteredData = data;
+            
+            // Дополнительные условия
+            additionalGroups.forEach(group => {
+                const zone = group.querySelector('.drop-zone');
+                const paramText = zone.textContent;
+                const paramType = zone.getAttribute('data-type');
+                const paramField = zone.getAttribute('data-field');
+                
+                if (!paramText || paramText === " ") {
+                    showResult("unionResult", "Пожалуйста, заполните все дополнительные параметры", true);
+                    return;
+                }
+                
+                const paramValue = paramType === 'positive' ? 'Да' : 'Нет';
+                const paramFilter = createFilter(paramField, paramValue);
+                filteredData = filteredData.filter(paramFilter);
+            });
+            
+            const totalCount = filteredData.length;
+            
+            if (totalCount === 0) {
+                showResult("unionResult", "Нет данных, удовлетворяющих условиям", true);
+                return;
+            }
+            
+            const event1Count = filteredData.filter(event1Filter).length;
+            const event2Count = filteredData.filter(event2Filter).length;
+            const bothEventsCount = filteredData.filter(d => event1Filter(d) && event2Filter(d)).length;
+            
+            const probability = ((event1Count + event2Count - bothEventsCount) / totalCount * 100).toFixed(2);
+            
+            let formula = `P(${event1Text} ∪ ${event2Text}`;
+            if (additionalGroups.length > 0) {
+                formula += ` ∩ ${Array.from(additionalGroups).map(g => g.querySelector('.drop-zone').textContent).join(' ∩ ')})`;
+            } else {
+                formula += `)`;
+            }
+            
+            formula += ` = (${event1Count} + ${event2Count} - ${bothEventsCount})/${totalCount} = ${probability}%`;
+            
+            let description = `Вероятность ${event1Text} или ${event2Text}`;
+            if (additionalGroups.length > 0) {
+                description += ` при условии ${Array.from(additionalGroups).map(g => g.querySelector('.drop-zone').textContent).join(' и ')}`;
+            }
+            
+            showResult(
+                "unionResult", 
+                `${description}: ${probability}%`, 
+                false, 
+                formula
+            );
+        }
+        
         function showResult(elementId, message, isError, formula = null) {
             const resultDiv = document.getElementById(elementId);
             
             if (isError) {
-                resultDiv.innerHTML = `
-                    <p style="color: red;">${message}</p>
-                `;
-                return;
+                resultDiv.innerHTML = `<p style="color: red;">${message}</p>`;
+            } else {
+                let content = `<p>${message}</p>`;
+                if (formula) {
+                    content += `<div class="formula">${formula}</div>`;
+                }
+                resultDiv.innerHTML = content;
             }
-            
-            let formulaHtml = '';
-            if (formula) {
-                formulaHtml = `
-                    <div class="formula">${formula}</div>
-                `;
-            }
-            
-            resultDiv.innerHTML = `
-                <p>${message}</p>
-                ${formulaHtml}
-            `;
         }
     </script>
 </body>
